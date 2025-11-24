@@ -18,6 +18,7 @@ from typing import Dict, List, Tuple, Optional, Union
 import pytz
 import requests
 import yaml
+from deep_translator import GoogleTranslator
 
 
 VERSION = "3.3.0"
@@ -142,6 +143,11 @@ def load_config():
             "HOTNESS_WEIGHT": config_data["weight"]["hotness_weight"],
         },
         "PLATFORMS": config_data["platforms"],
+        "TRANSLATION": {
+            "ENABLE": config_data.get("translation", {}).get("enable_translation", False),
+            "TARGET": config_data.get("translation", {}).get("target_language", "ko"),
+            "SOURCE": config_data.get("translation", {}).get("source_language", "auto"),
+        },
     }
 
     # 通知渠道配置（环境变量优先）
@@ -478,6 +484,14 @@ class DataFetcher:
             id_value = id_info
             alias = id_value
 
+        # Custom fetcher for GeekNews
+        if id_value == "geeknews":
+            data = self.fetch_geeknews()
+            if data:
+                print(f"获取 {id_value} 成功（最新数据）")
+                return data, id_value, alias
+            return None, id_value, alias
+
         url = f"https://newsnow.busiyi.world/api/s?id={id_value}&latest"
 
         proxies = None
@@ -524,6 +538,49 @@ class DataFetcher:
                     return None, id_value, alias
         return None, id_value, alias
 
+    def fetch_geeknews(self) -> Optional[str]:
+        """Fetch data from GeekNews (news.hada.io)"""
+        try:
+            url = "https://news.hada.io/"
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+            }
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(response.text, "html.parser")
+            
+            items = []
+            # GeekNews structure: div.topic_row
+            topics = soup.select("div.topic_row")
+            
+            for topic in topics:
+                title_elem = topic.select_one("div.topictitle a h1")
+                if not title_elem:
+                    continue
+                
+                title = title_elem.get_text(strip=True)
+                link = topic.select_one("div.topictitle a")["href"]
+                if link.startswith("/"):
+                    link = f"https://news.hada.io{link}"
+                
+                items.append({
+                    "title": title,
+                    "url": link,
+                    "mobileUrl": link
+                })
+            
+            # Construct JSON response similar to API
+            return json.dumps({
+                "status": "success",
+                "items": items
+            }, ensure_ascii=False)
+            
+        except Exception as e:
+            print(f"GeekNews fetch failed: {e}")
+            return None
+
     def crawl_websites(
         self,
         ids_list: List[Union[str, Tuple[str, str]]],
@@ -565,6 +622,34 @@ class DataFetcher:
                                 "url": url,
                                 "mobileUrl": mobile_url,
                             }
+
+                    # 批量翻译标题
+                    if CONFIG["TRANSLATION"]["ENABLE"]:
+                        try:
+                            titles_to_translate = list(results[id_value].keys())
+                            if titles_to_translate:
+                                print(f"正在翻译 {len(titles_to_translate)} 条标题...")
+                                translator = GoogleTranslator(
+                                    source=CONFIG["TRANSLATION"]["SOURCE"],
+                                    target=CONFIG["TRANSLATION"]["TARGET"]
+                                )
+                                # 批量翻译（deep-translator 实际上是循环调用，但我们可以自己分批处理以防万一）
+                                # 这里直接使用 translate_batch，它内部会处理
+                                translated_titles = translator.translate_batch(titles_to_translate)
+                                
+                                # 更新结果字典，使用翻译后的标题
+                                new_platform_results = {}
+                                for original_title, translated_title in zip(titles_to_translate, translated_titles):
+                                    # 如果翻译失败或为空，使用原标题
+                                    final_title = translated_title if translated_title else original_title
+                                    # 保持原有的数据结构
+                                    new_platform_results[final_title] = results[id_value][original_title]
+                                
+                                results[id_value] = new_platform_results
+                                print(f"翻译完成: {id_value}")
+                        except Exception as e:
+                            print(f"翻译失败 {id_value}: {e}")
+                            # 翻译失败时保持原样，不抛出异常影响流程
                 except json.JSONDecodeError:
                     print(f"解析 {id_value} 响应失败")
                     failed_ids.append(id_value)
