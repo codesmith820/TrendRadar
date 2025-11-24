@@ -148,6 +148,8 @@ def load_config():
             "TARGET": config_data.get("translation", {}).get("target_language", "ko"),
             "SOURCE": config_data.get("translation", {}).get("source_language", "auto"),
         },
+        "SLACK_WEBHOOK_URL": os.environ.get("SLACK_WEBHOOK_URL", "").strip()
+        or config_data["notification"].get("slack_webhook_url", ""),
     }
 
     # 通知渠道配置（环境变量优先）
@@ -228,6 +230,9 @@ def load_config():
     if config["EMAIL_FROM"] and config["EMAIL_PASSWORD"] and config["EMAIL_TO"]:
         from_source = "环境变量" if os.environ.get("EMAIL_FROM") else "配置文件"
         notification_sources.append(f"邮件({from_source})")
+    if config["SLACK_WEBHOOK_URL"]:
+        slack_source = "环境变量" if os.environ.get("SLACK_WEBHOOK_URL") else "配置文件"
+        notification_sources.append(f"Slack({slack_source})")
 
     if config["NTFY_SERVER_URL"] and config["NTFY_TOPIC"]:
         server_source = "环境变量" if os.environ.get("NTFY_SERVER_URL") else "配置文件"
@@ -361,7 +366,32 @@ def html_escape(text: str) -> str:
 
 
 # === 推送记录管理 ===
-class PushRecordManager:
+class SlackNotifier:
+    """Slack通知发送器"""
+
+    def __init__(self, webhook_url: str):
+        self.webhook_url = webhook_url
+
+    def send_message(self, message: str) -> bool:
+        """发送消息到Slack"""
+        if not self.webhook_url:
+            print("Slack Webhook URL未配置")
+            return False
+
+        try:
+            payload = {"text": message}
+            response = requests.post(
+                self.webhook_url, json=payload, headers={"Content-Type": "application/json"}
+            )
+            response.raise_for_status()
+            print("Slack消息发送成功")
+            return True
+        except Exception as e:
+            print(f"Slack消息发送失败: {e}")
+            return False
+
+
+class NotificationManager:
     """推送记录管理器"""
 
     def __init__(self):
