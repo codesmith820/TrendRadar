@@ -3,8 +3,8 @@
 Quantum Computer
 qubit
 PQC
-+양자
-+Quantum
+양자
+Quantum
 
 # AI
 AI
@@ -17,8 +17,7 @@ Gemini
 codewiki
 nano banana
 antigravity
-+AI
-+Model
+Model
 
 # Energy
 에너지
@@ -35,4 +34,3 @@ SMR
 연료주기
 디버터
 초전도자석
-+Energy
