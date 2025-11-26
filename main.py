@@ -1309,7 +1309,7 @@ def count_word_frequency(
                             results_to_process[source_id] = filtered_titles
 
                 print(
-                    f"때앞순위모드：최신시사이 {latest_time}，筛选出 {sum(len(titles) for titles in results_to_process.values())} 条때앞순위뉴스"
+                    f"때앞순위모드：최신시사이 {latest_time}，筛选나가다 {sum(len(titles) for titles in results_to_process.values())} 개때앞순위뉴스"
                 )
             else:
                 results_to_process = results
@@ -1490,7 +1490,7 @@ def count_word_frequency(
                 else "빈도 단어일치"
             )
             print(
-                f"증분 모드：당일첫 번째수집，{total_input_news} 개 뉴스중있음 {matched_new_count} 条{filter_status}"
+                f"증분 모드：당일첫 번째수집，{total_input_news} 개 뉴스중있음 {matched_new_count} 개{filter_status}"
             )
         else:
             if new_titles:
@@ -1502,7 +1502,7 @@ def count_word_frequency(
                     else "일치빈도 단어"
                 )
                 print(
-                    f"증분 모드：{total_new_count} 条새로 추가뉴스중，있음 {matched_new_count} 条{filter_status}"
+                    f"증분 모드：{total_new_count} 개새로 추가뉴스중，있음 {matched_new_count} 개{filter_status}"
                 )
                 if matched_new_count == 0 and len(word_groups) > 1:
                     print("증분 모드: 키워드와 일치하는 신규 뉴스가 없어 알림을 보내지 않습니다")
@@ -1517,7 +1517,7 @@ def count_word_frequency(
                 else "빈도 단어일치"
             )
             print(
-                f"때앞순위모드：당일첫 번째수집，{total_input_news} 条때앞순위뉴스중있음 {matched_new_count} 条{filter_status}"
+                f"때앞순위모드：당일첫 번째수집，{total_input_news} 개때앞순위뉴스중있음 {matched_new_count} 개{filter_status}"
             )
         else:
             matched_count = sum(stat["count"] for stat in word_stats.values())
@@ -1527,11 +1527,11 @@ def count_word_frequency(
                 else "빈도 단어일치"
             )
             print(
-                f"때앞순위모드：{total_input_news} 条때앞순위뉴스중있음 {matched_count} 条{filter_status}"
+                f"때앞순위모드：{total_input_news} 개때앞순위뉴스중있음 {matched_count} 개{filter_status}"
             )
 
     stats = []
-    # 생성 group_key 까지위치및最큰수映射
+    # 생성 group_key 까지위치및최큰수映射
     group_key_to_position = {
         group["group_key"]: idx for idx, group in enumerate(word_groups)
     }
@@ -1554,10 +1554,10 @@ def count_word_frequency(
             ),
         )
 
-        # 应사용最큰표시수제한（우선순위：单独설정 > 全局설정）
+        # 해야 하다사용최큰표시수제한（우선순위：单独설정 > 전역설정）
         group_max_count = group_key_to_max_count.get(group_key, 0)
         if group_max_count == 0:
-            # 사용全局설정
+            # 사용전역설정
             group_max_count = CONFIG.get("MAX_NEWS_PER_KEYWORD", 0)
 
         if group_max_count > 0:
@@ -1579,10 +1579,10 @@ def count_word_frequency(
 
     # 에 따라설정선택정렬우선순위
     if CONFIG.get("SORT_BY_POSITION_FIRST", False):
-        # 先별설정위치，再별인기条数
+        # 먼저별설정위치，다음별인기개수
         stats.sort(key=lambda x: (x["position"], -x["count"]))
     else:
-        # 先별인기条数，再별설정위치（원본로직）
+        # 먼저별인기개수，다음별설정위치（원본로직）
         stats.sort(key=lambda x: (-x["count"], x["position"]))
 
     return stats, total_titles
@@ -1602,7 +1602,7 @@ def prepare_report_data(
     # 에증분 모드아래숨기기새로 추가뉴스영역
     hide_new_section = mode == "incremental"
 
-    # 만있음에아님숨기기모드아래才처리새로 추가뉴스部분
+    # 만있음에아님숨기기모드아래才처리새로 추가뉴스부분분
     if not hide_new_section:
         filtered_new_titles = {}
         if new_titles and id_to_name:
@@ -1716,7 +1716,7 @@ def format_title_for_platform(
         if title_data["time_display"]:
             result += f" <font color='grey'>- {title_data['time_display']}</font>"
         if title_data["count"] > 1:
-            result += f" <font color='green'>({title_data['count']}次)</font>"
+            result += f" <font color='green'>({title_data['count']}번)</font>"
 
         return result
 
@@ -1738,7 +1738,7 @@ def format_title_for_platform(
         if title_data["time_display"]:
             result += f" - {title_data['time_display']}"
         if title_data["count"] > 1:
-            result += f" ({title_data['count']}次)"
+            result += f" ({title_data['count']}번)"
 
         return result
 
@@ -1760,7 +1760,7 @@ def format_title_for_platform(
         if title_data["time_display"]:
             result += f" - {title_data['time_display']}"
         if title_data["count"] > 1:
-            result += f" ({title_data['count']}次)"
+            result += f" ({title_data['count']}번)"
 
         return result
 
@@ -1782,7 +1782,7 @@ def format_title_for_platform(
         if title_data["time_display"]:
             result += f" <code>- {title_data['time_display']}</code>"
         if title_data["count"] > 1:
-            result += f" <code>({title_data['count']}次)</code>"
+            result += f" <code>({title_data['count']}번)</code>"
 
         return result
 
@@ -1804,7 +1804,7 @@ def format_title_for_platform(
         if title_data["time_display"]:
             result += f" `- {title_data['time_display']}`"
         if title_data["count"] > 1:
-            result += f" `({title_data['count']}次)`"
+            result += f" `({title_data['count']}번)`"
 
         return result
 
@@ -1832,7 +1832,7 @@ def format_title_for_platform(
             escaped_time = html_escape(title_data["time_display"])
             formatted_title += f" <font color='grey'>- {escaped_time}</font>"
         if title_data["count"] > 1:
-            formatted_title += f" <font color='green'>({title_data['count']}次)</font>"
+            formatted_title += f" <font color='green'>({title_data['count']}번)</font>"
 
         if title_data.get("is_new"):
             formatted_title = f"<div class='new-title'>🆕 {formatted_title}</div>"
@@ -1897,7 +1897,7 @@ def render_html_content(
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>인기뉴스분析</title>
+        <title>인기뉴스분분석</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <style>
             * { box-sizing: border-box; }
@@ -2327,9 +2327,9 @@ def render_html_content(
             <div class="header">
                 <div class="save-buttons">
                     <button class="save-btn" onclick="saveAsImage()">저장로이미지</button>
-                    <button class="save-btn" onclick="saveAsMultipleImages()">분段저장</button>
+                    <button class="save-btn" onclick="saveAsMultipleImages()">분단계저장</button>
                 </div>
-                <div class="header-title">인기뉴스분析</div>
+                <div class="header-title">인기뉴스분분석</div>
                 <div class="header-info">
                     <div class="info-item">
                         <span class="info-label">보고서타입</span>
@@ -2344,7 +2344,7 @@ def render_html_content(
         else:
             html += "때일요약"
     else:
-        html += "实시분析"
+        html += "실제시분분석"
 
     html += """</span>
                     </div>
@@ -2352,7 +2352,7 @@ def render_html_content(
                         <span class="info-label">뉴스총수</span>
                         <span class="info-value">"""
 
-    html += f"{total_titles} 条"
+    html += f"{total_titles} 개"
 
     # 계산筛选된인기뉴스수
     hot_news_count = sum(len(stat["titles"]) for stat in report_data["stats"])
@@ -2363,7 +2363,7 @@ def render_html_content(
                         <span class="info-label">인기뉴스</span>
                         <span class="info-value">"""
 
-    html += f"{hot_news_count} 条"
+    html += f"{hot_news_count} 개"
 
     html += """</span>
                     </div>
@@ -2393,14 +2393,14 @@ def render_html_content(
                     </ul>
                 </div>"""
 
-    # 처리主要통계데이터
+    # 처리主원하다통계데이터
     if report_data["stats"]:
         total_count = len(report_data["stats"])
 
         for i, stat in enumerate(report_data["stats"], 1):
             count = stat["count"]
 
-            # 确定热度등급
+            # 确定뜨겁다度등급
             if count >= 10:
                 count_class = "hot"
             elif count >= 5:
@@ -2415,12 +2415,12 @@ def render_html_content(
                     <div class="word-header">
                         <div class="word-info">
                             <div class="word-name">{escaped_word}</div>
-                            <div class="word-count {count_class}">{count} 条</div>
+                            <div class="word-count {count_class}">{count} 개</div>
                         </div>
                         <div class="word-index">{i}/{total_count}</div>
                     </div>"""
 
-            # 처리각단어 그룹아래뉴스제목，각개 뉴스标위序号
+            # 처리각단어 그룹아래뉴스제목，각개 뉴스标위순번
             for j, title_data in enumerate(stat["titles"], 1):
                 is_new = title_data.get("is_new", False)
                 new_class = "new" if is_new else ""
@@ -2457,7 +2457,7 @@ def render_html_content(
                 # 처리시사이표시
                 time_display = title_data.get("time_display", "")
                 if time_display:
-                    # 简化시사이표시형식，波浪线교체로~
+                    # 간단하다化시사이표시형식，波浪线교체로~
                     simplified_time = (
                         time_display.replace(" ~ ", "~")
                         .replace("[", "")
@@ -2470,13 +2470,13 @@ def render_html_content(
                 # 처리출현 횟수
                 count_info = title_data.get("count", 1)
                 if count_info > 1:
-                    html += f'<span class="count-info">{count_info}次</span>'
+                    html += f'<span class="count-info">{count_info}번</span>'
 
                 html += """
                             </div>
                             <div class="news-title">"""
 
-                # 처리제목및链接
+                # 처리제목및링크
                 escaped_title = html_escape(title_data["title"])
                 link_url = title_data.get("mobile_url") or title_data.get("url", "")
 
@@ -2498,7 +2498,7 @@ def render_html_content(
     if report_data["new_titles"]:
         html += f"""
                 <div class="new-section">
-                    <div class="new-section-title">이번새로 추가인기 (共 {report_data['total_new_count']} 条)</div>"""
+                    <div class="new-section-title">이번새로 추가인기 (총 {report_data['total_new_count']} 개)</div>"""
 
         for source_data in report_data["new_titles"]:
             escaped_source = html_escape(source_data["source_name"])
@@ -2506,9 +2506,9 @@ def render_html_content(
 
             html += f"""
                     <div class="new-source-group">
-                        <div class="new-source-title">{escaped_source} · {titles_count}条</div>"""
+                        <div class="new-source-title">{escaped_source} · {titles_count}개</div>"""
 
-            # 로새로 추가뉴스也추가序号
+            # 로새로 추가뉴스也추가순번
             for idx, title_data in enumerate(source_data["titles"], 1):
                 ranks = title_data.get("ranks", [])
 
@@ -2535,7 +2535,7 @@ def render_html_content(
                             <div class="new-item-content">
                                 <div class="new-item-title">"""
 
-                # 처리새로 추가뉴스链接
+                # 처리새로 추가뉴스링크
                 escaped_title = html_escape(title_data["title"])
                 link_url = title_data.get("mobile_url") or title_data.get("url", "")
 
@@ -2591,11 +2591,11 @@ def render_html_content(
                     // 대기页面稳定
                     await new Promise(resolve => setTimeout(resolve, 200));
                     
-                    // 截图앞숨기기별钮
+                    // 스크린샷앞숨기기별버튼
                     const buttons = document.querySelector('.save-buttons');
                     buttons.style.visibility = 'hidden';
                     
-                    // 再次대기보장별钮完全숨기기
+                    // 다음번대기보장별버튼完全숨기기
                     await new Promise(resolve => setTimeout(resolve, 100));
                     
                     const container = document.querySelector('.container');
@@ -2623,12 +2623,12 @@ def render_html_content(
                     
                     const link = document.createElement('a');
                     const now = new Date();
-                    const filename = `TrendRadar_인기뉴스분析_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}.png`;
+                    const filename = `TrendRadar_인기뉴스분분석_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}.png`;
                     
                     link.download = filename;
                     link.href = canvas.toDataURL('image/png', 1.0);
                     
-                    // 触发아래载
+                    // 触发아래로드
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -2658,10 +2658,10 @@ def render_html_content(
                 const maxHeight = 5000 / scale;
                 
                 try {
-                    button.textContent = '분析중...';
+                    button.textContent = '분분석중...';
                     button.disabled = true;
                     
-                    // 가져오기모든可能분割요소
+                    // 가져오기모든가능분분할요소
                     const newsItems = Array.from(container.querySelectorAll('.news-item'));
                     const wordGroups = Array.from(container.querySelectorAll('.word-group'));
                     const newSection = container.querySelector('.new-section');
@@ -2673,7 +2673,7 @@ def render_html_content(
                     const containerRect = container.getBoundingClientRect();
                     const elements = [];
                     
-                    // 추가header作로必须포함요소
+                    // 추가header작업로반드시반드시포함요소
                     elements.push({
                         type: 'header',
                         element: header,
@@ -2699,7 +2699,7 @@ def render_html_content(
                         const groupRect = group.getBoundingClientRect();
                         const groupNewsItems = group.querySelectorAll('.news-item');
                         
-                        // 추가word-groupheader部분
+                        // 추가word-groupheader부분분
                         const wordHeader = group.querySelector('.word-header');
                         if (wordHeader) {
                             const headerRect = wordHeader.getBoundingClientRect();
@@ -2727,7 +2727,7 @@ def render_html_content(
                         });
                     });
                     
-                    // 추가새로 추가뉴스部분
+                    // 추가새로 추가뉴스부분분
                     if (newSection) {
                         const rect = newSection.getBoundingClientRect();
                         elements.push({
@@ -2749,7 +2749,7 @@ def render_html_content(
                         height: footer.offsetHeight
                     });
                     
-                    // 계산분割点
+                    // 계산분분할点
                     const segments = [];
                     let currentSegment = { start: 0, end: 0, height: 0, includeHeader: true };
                     let headerHeight = header.offsetHeight;
@@ -2759,13 +2759,13 @@ def render_html_content(
                         const element = elements[i];
                         const potentialHeight = element.bottom - currentSegment.start;
                         
-                        // 확인인否필요생성새분段
+                        // 확인인아니오필요생성새분단계
                         if (potentialHeight > maxHeight && currentSegment.height > headerHeight) {
-                            // 에앞一个요소종료处분割
+                            // 에앞一개요소종료处분분할
                             currentSegment.end = elements[i - 1].bottom;
                             segments.push(currentSegment);
                             
-                            // 시작새분段
+                            // 시작새분단계
                             currentSegment = {
                                 start: currentSegment.end,
                                 end: 0,
@@ -2778,7 +2778,7 @@ def render_html_content(
                         }
                     }
                     
-                    // 추가마지막분段
+                    // 추가마지막분단계
                     if (currentSegment.height > 0) {
                         currentSegment.end = container.offsetHeight;
                         segments.push(currentSegment);
@@ -2786,17 +2786,17 @@ def render_html_content(
                     
                     button.textContent = `생성중 (0/${segments.length})...`;
                     
-                    // 숨기기저장별钮
+                    // 숨기기저장별버튼
                     const buttons = document.querySelector('.save-buttons');
                     buttons.style.visibility = 'hidden';
                     
-                    // 로각분段생성이미지
+                    // 로각분단계생성이미지
                     const images = [];
                     for (let i = 0; i < segments.length; i++) {
                         const segment = segments[i];
                         button.textContent = `생성중 (${i + 1}/${segments.length})...`;
                         
-                        // 생성临시컨테이너사용에截图
+                        // 생성임시시컨테이너사용에스크린샷
                         const tempContainer = document.createElement('div');
                         tempContainer.style.cssText = `
                             position: absolute;
@@ -2807,10 +2807,10 @@ def render_html_content(
                         `;
                         tempContainer.className = 'container';
                         
-                        // 克隆컨테이너콘텐츠
+                        // 복제컨테이너콘텐츠
                         const clonedContainer = container.cloneNode(true);
                         
-                        // 제거克隆콘텐츠중저장별钮
+                        // 제거복제콘텐츠중저장별버튼
                         const clonedButtons = clonedContainer.querySelector('.save-buttons');
                         if (clonedButtons) {
                             clonedButtons.style.display = 'none';
@@ -2840,16 +2840,16 @@ def render_html_content(
                         
                         images.push(canvas.toDataURL('image/png', 1.0));
                         
-                        // 정리临시컨테이너
+                        // 정리임시시컨테이너
                         document.body.removeChild(tempContainer);
                     }
                     
-                    // 恢复별钮표시
+                    // 恢복잡하다별버튼표시
                     buttons.style.visibility = 'visible';
                     
-                    // 아래载모든이미지
+                    // 아래로드모든이미지
                     const now = new Date();
-                    const baseFilename = `TrendRadar_인기뉴스분析_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+                    const baseFilename = `TrendRadar_인기뉴스분분석_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
                     
                     for (let i = 0; i < images.length; i++) {
                         const link = document.createElement('a');
@@ -2859,18 +2859,18 @@ def render_html_content(
                         link.click();
                         document.body.removeChild(link);
                         
-                        // 延迟一아래避免浏览器阻止여러아래载
+                        // 延迟一아래避免浏览器阻止여러아래로드
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
                     
-                    button.textContent = `已저장 ${segments.length} 张이미지!`;
+                    button.textContent = `이미저장 ${segments.length} 张이미지!`;
                     setTimeout(() => {
                         button.textContent = originalText;
                         button.disabled = false;
                     }, 2000);
                     
                 } catch (error) {
-                    console.error('분段저장실패:', error);
+                    console.error('분단계저장실패:', error);
                     const buttons = document.querySelector('.save-buttons');
                     buttons.style.visibility = 'visible';
                     button.textContent = '저장실패';
@@ -2910,11 +2910,11 @@ def render_feishu_content(
         sequence_display = f"<font color='grey'>[{i + 1}/{total_count}]</font>"
 
         if count >= 10:
-            text_content += f"🔥 {sequence_display} **{word}** : <font color='red'>{count}</font> 条\n\n"
+            text_content += f"🔥 {sequence_display} **{word}** : <font color='red'>{count}</font> 개\n\n"
         elif count >= 5:
-            text_content += f"📈 {sequence_display} **{word}** : <font color='orange'>{count}</font> 条\n\n"
+            text_content += f"📈 {sequence_display} **{word}** : <font color='orange'>{count}</font> 개\n\n"
         else:
-            text_content += f"📌 {sequence_display} **{word}** : {count} 条\n\n"
+            text_content += f"📌 {sequence_display} **{word}** : {count} 개\n\n"
 
         for j, title_data in enumerate(stat["titles"], 1):
             formatted_title = format_title_for_platform(
@@ -2930,24 +2930,24 @@ def render_feishu_content(
 
     if not text_content:
         if mode == "incremental":
-            mode_text = "증분 모드아래暂없음새로 추가일치인기 키워드"
+            mode_text = "증분 모드아래임시없음새로 추가일치인기 키워드"
         elif mode == "current":
-            mode_text = "때앞순위모드아래暂없음일치인기 키워드"
+            mode_text = "때앞순위모드아래임시없음일치인기 키워드"
         else:
-            mode_text = "暂없음일치인기 키워드"
+            mode_text = "임시없음일치인기 키워드"
         text_content = f"📭 {mode_text}\n\n"
 
     if report_data["new_titles"]:
-        if text_content and "暂없음일치" not in text_content:
+        if text_content and "임시없음일치" not in text_content:
             text_content += f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n"
 
         text_content += (
-            f"🆕 **이번새로 추가인기뉴스** (共 {report_data['total_new_count']} 条)\n\n"
+            f"🆕 **이번새로 추가인기뉴스** (총 {report_data['total_new_count']} 개)\n\n"
         )
 
         for source_data in report_data["new_titles"]:
             text_content += (
-                f"**{source_data['source_name']}** ({len(source_data['titles'])} 条):\n"
+                f"**{source_data['source_name']}** ({len(source_data['titles'])} 개):\n"
             )
 
             for j, title_data in enumerate(source_data["titles"], 1):
@@ -2961,7 +2961,7 @@ def render_feishu_content(
             text_content += "\n"
 
     if report_data["failed_ids"]:
-        if text_content and "暂없음일치" not in text_content:
+        if text_content and "임시없음일치" not in text_content:
             text_content += f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n"
 
         text_content += "⚠️ **데이터가져오기실패플랫폼：**\n\n"
@@ -2990,7 +2990,7 @@ def render_dingtalk_content(
     )
     now = get_beijing_time()
 
-    text_content += f"**总뉴스数：** {total_titles}\n\n"
+    text_content += f"**총뉴스수：** {total_titles}\n\n"
     text_content += f"**시사이：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
     text_content += f"**타입：** 인기분분석 보고서\n\n"
 
@@ -3008,11 +3008,11 @@ def render_dingtalk_content(
             sequence_display = f"[{i + 1}/{total_count}]"
 
             if count >= 10:
-                text_content += f"🔥 {sequence_display} **{word}** : **{count}** 条\n\n"
+                text_content += f"🔥 {sequence_display} **{word}** : **{count}** 개\n\n"
             elif count >= 5:
-                text_content += f"📈 {sequence_display} **{word}** : **{count}** 条\n\n"
+                text_content += f"📈 {sequence_display} **{word}** : **{count}** 개\n\n"
             else:
-                text_content += f"📌 {sequence_display} **{word}** : {count} 条\n\n"
+                text_content += f"📌 {sequence_display} **{word}** : {count} 개\n\n"
 
             for j, title_data in enumerate(stat["titles"], 1):
                 formatted_title = format_title_for_platform(
@@ -3028,23 +3028,23 @@ def render_dingtalk_content(
 
     if not report_data["stats"]:
         if mode == "incremental":
-            mode_text = "증분 모드아래暂없음새로 추가일치인기 키워드"
+            mode_text = "증분 모드아래임시없음새로 추가일치인기 키워드"
         elif mode == "current":
-            mode_text = "때앞순위모드아래暂없음일치인기 키워드"
+            mode_text = "때앞순위모드아래임시없음일치인기 키워드"
         else:
-            mode_text = "暂없음일치인기 키워드"
+            mode_text = "임시없음일치인기 키워드"
         text_content += f"📭 {mode_text}\n\n"
 
     if report_data["new_titles"]:
-        if text_content and "暂없음일치" not in text_content:
+        if text_content and "임시없음일치" not in text_content:
             text_content += f"\n---\n\n"
 
         text_content += (
-            f"🆕 **이번새로 추가인기뉴스** (共 {report_data['total_new_count']} 条)\n\n"
+            f"🆕 **이번새로 추가인기뉴스** (총 {report_data['total_new_count']} 개)\n\n"
         )
 
         for source_data in report_data["new_titles"]:
-            text_content += f"**{source_data['source_name']}** ({len(source_data['titles'])} 条):\n\n"
+            text_content += f"**{source_data['source_name']}** ({len(source_data['titles'])} 개):\n\n"
 
             for j, title_data in enumerate(source_data["titles"], 1):
                 title_data_copy = title_data.copy()
@@ -3057,7 +3057,7 @@ def render_dingtalk_content(
             text_content += "\n"
 
     if report_data["failed_ids"]:
-        if text_content and "暂없음일치" not in text_content:
+        if text_content and "임시없음일치" not in text_content:
             text_content += f"\n---\n\n"
 
         text_content += "⚠️ **데이터가져오기실패플랫폼：**\n\n"
@@ -3079,7 +3079,7 @@ def split_content_into_batches(
     max_bytes: int = None,
     mode: str = "daily",
 ) -> List[str]:
-    """배치 처리메시지콘텐츠，보장단어 그룹제목+까지적은첫 번째개 뉴스전체性"""
+    """배치 처리메시지콘텐츠，보장단어 그룹제목+까지적은첫 번째개 뉴스전체성"""
     if max_bytes is None:
         if format_type == "dingtalk":
             max_bytes = CONFIG.get("DINGTALK_BATCH_SIZE", 20000)
@@ -3099,15 +3099,15 @@ def split_content_into_batches(
 
     base_header = ""
     if format_type == "wework":
-        base_header = f"**总뉴스数：** {total_titles}\n\n\n\n"
+        base_header = f"**총뉴스수：** {total_titles}\n\n\n\n"
     elif format_type == "telegram":
-        base_header = f"总뉴스数： {total_titles}\n\n"
+        base_header = f"총뉴스수： {total_titles}\n\n"
     elif format_type == "ntfy":
-        base_header = f"**总뉴스数：** {total_titles}\n\n"
+        base_header = f"**총뉴스수：** {total_titles}\n\n"
     elif format_type == "feishu":
         base_header = ""
     elif format_type == "dingtalk":
-        base_header = f"**总뉴스数：** {total_titles}\n\n"
+        base_header = f"**총뉴스수：** {total_titles}\n\n"
         base_header += f"**시사이：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
         base_header += f"**타입：** 인기분분석 보고서\n\n"
         base_header += "---\n\n"
@@ -3156,11 +3156,11 @@ def split_content_into_batches(
         and not report_data["failed_ids"]
     ):
         if mode == "incremental":
-            mode_text = "증분 모드아래暂없음새로 추가일치인기 키워드"
+            mode_text = "증분 모드아래임시없음새로 추가일치인기 키워드"
         elif mode == "current":
-            mode_text = "때앞순위모드아래暂없음일치인기 키워드"
+            mode_text = "때앞순위모드아래임시없음일치인기 키워드"
         else:
-            mode_text = "暂없음일치인기 키워드"
+            mode_text = "임시없음일치인기 키워드"
         simple_content = f"📭 {mode_text}\n\n"
         final_content = base_header + simple_content + base_footer
         batches.append(final_content)
@@ -3184,7 +3184,7 @@ def split_content_into_batches(
             current_batch = base_header + stats_header
             current_batch_has_content = True
 
-        # 逐个처리단어 그룹（보장단어 그룹제목+첫 번째개 뉴스원본원자성）
+        # 하나씩처리단어 그룹（보장단어 그룹제목+첫 번째개 뉴스원본원자성）
         for i, stat in enumerate(report_data["stats"]):
             word = stat["word"]
             count = stat["count"]
@@ -3195,50 +3195,50 @@ def split_content_into_batches(
             if format_type == "wework":
                 if count >= 10:
                     word_header = (
-                        f"🔥 {sequence_display} **{word}** : **{count}** 条\n\n"
+                        f"🔥 {sequence_display} **{word}** : **{count}** 개\n\n"
                     )
                 elif count >= 5:
                     word_header = (
-                        f"📈 {sequence_display} **{word}** : **{count}** 条\n\n"
+                        f"📈 {sequence_display} **{word}** : **{count}** 개\n\n"
                     )
                 else:
-                    word_header = f"📌 {sequence_display} **{word}** : {count} 条\n\n"
+                    word_header = f"📌 {sequence_display} **{word}** : {count} 개\n\n"
             elif format_type == "telegram":
                 if count >= 10:
-                    word_header = f"🔥 {sequence_display} {word} : {count} 条\n\n"
+                    word_header = f"🔥 {sequence_display} {word} : {count} 개\n\n"
                 elif count >= 5:
-                    word_header = f"📈 {sequence_display} {word} : {count} 条\n\n"
+                    word_header = f"📈 {sequence_display} {word} : {count} 개\n\n"
                 else:
-                    word_header = f"📌 {sequence_display} {word} : {count} 条\n\n"
+                    word_header = f"📌 {sequence_display} {word} : {count} 개\n\n"
             elif format_type == "ntfy":
                 if count >= 10:
                     word_header = (
-                        f"🔥 {sequence_display} **{word}** : **{count}** 条\n\n"
+                        f"🔥 {sequence_display} **{word}** : **{count}** 개\n\n"
                     )
                 elif count >= 5:
                     word_header = (
-                        f"📈 {sequence_display} **{word}** : **{count}** 条\n\n"
+                        f"📈 {sequence_display} **{word}** : **{count}** 개\n\n"
                     )
                 else:
-                    word_header = f"📌 {sequence_display} **{word}** : {count} 条\n\n"
+                    word_header = f"📌 {sequence_display} **{word}** : {count} 개\n\n"
             elif format_type == "feishu":
                 if count >= 10:
-                    word_header = f"🔥 <font color='grey'>{sequence_display}</font> **{word}** : <font color='red'>{count}</font> 条\n\n"
+                    word_header = f"🔥 <font color='grey'>{sequence_display}</font> **{word}** : <font color='red'>{count}</font> 개\n\n"
                 elif count >= 5:
-                    word_header = f"📈 <font color='grey'>{sequence_display}</font> **{word}** : <font color='orange'>{count}</font> 条\n\n"
+                    word_header = f"📈 <font color='grey'>{sequence_display}</font> **{word}** : <font color='orange'>{count}</font> 개\n\n"
                 else:
-                    word_header = f"📌 <font color='grey'>{sequence_display}</font> **{word}** : {count} 条\n\n"
+                    word_header = f"📌 <font color='grey'>{sequence_display}</font> **{word}** : {count} 개\n\n"
             elif format_type == "dingtalk":
                 if count >= 10:
                     word_header = (
-                        f"🔥 {sequence_display} **{word}** : **{count}** 条\n\n"
+                        f"🔥 {sequence_display} **{word}** : **{count}** 개\n\n"
                     )
                 elif count >= 5:
                     word_header = (
-                        f"📈 {sequence_display} **{word}** : **{count}** 条\n\n"
+                        f"📈 {sequence_display} **{word}** : **{count}** 개\n\n"
                     )
                 else:
-                    word_header = f"📌 {sequence_display} **{word}** : {count} 条\n\n"
+                    word_header = f"📌 {sequence_display} **{word}** : {count} 개\n\n"
 
             # 구성첫 번째개 뉴스
             first_news_line = ""
@@ -3271,7 +3271,7 @@ def split_content_into_batches(
                 if len(stat["titles"]) > 1:
                     first_news_line += "\n"
 
-            # 원본원자성확인：단어 그룹제목+첫 번째개 뉴스必须一起처리
+            # 원본원자성확인：단어 그룹제목+첫 번째개 뉴스반드시반드시一일어나다처리
             word_with_first_news = word_header + first_news_line
             test_content = current_batch + word_with_first_news
 
@@ -3290,7 +3290,7 @@ def split_content_into_batches(
                 current_batch_has_content = True
                 start_index = 1
 
-            # 처리剩余뉴스条目
+            # 처리남은뉴스개目
             for j in range(start_index, len(stat["titles"])):
                 title_data = stat["titles"][j]
                 if format_type == "wework":
@@ -3354,21 +3354,21 @@ def split_content_into_batches(
                 ):
                     current_batch = test_content
 
-    # 처리새로 추가뉴스（同样보장来源제목+첫 번째개 뉴스원본원자성）
+    # 처리새로 추가뉴스（同같은보장소스제목+첫 번째개 뉴스원본원자성）
     if report_data["new_titles"]:
         new_header = ""
         if format_type == "wework":
-            new_header = f"\n\n\n\n🆕 **이번새로 추가인기뉴스** (共 {report_data['total_new_count']} 条)\n\n"
+            new_header = f"\n\n\n\n🆕 **이번새로 추가인기뉴스** (총 {report_data['total_new_count']} 개)\n\n"
         elif format_type == "telegram":
             new_header = (
-                f"\n\n🆕 이번새로 추가인기뉴스 (共 {report_data['total_new_count']} 条)\n\n"
+                f"\n\n🆕 이번새로 추가인기뉴스 (총 {report_data['total_new_count']} 개)\n\n"
             )
         elif format_type == "ntfy":
-            new_header = f"\n\n🆕 **이번새로 추가인기뉴스** (共 {report_data['total_new_count']} 条)\n\n"
+            new_header = f"\n\n🆕 **이번새로 추가인기뉴스** (총 {report_data['total_new_count']} 개)\n\n"
         elif format_type == "feishu":
-            new_header = f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n🆕 **이번새로 추가인기뉴스** (共 {report_data['total_new_count']} 条)\n\n"
+            new_header = f"\n{CONFIG['FEISHU_MESSAGE_SEPARATOR']}\n\n🆕 **이번새로 추가인기뉴스** (총 {report_data['total_new_count']} 개)\n\n"
         elif format_type == "dingtalk":
-            new_header = f"\n---\n\n🆕 **이번새로 추가인기뉴스** (共 {report_data['total_new_count']} 条)\n\n"
+            new_header = f"\n---\n\n🆕 **이번새로 추가인기뉴스** (총 {report_data['total_new_count']} 개)\n\n"
 
         test_content = current_batch + new_header
         if (
@@ -3383,21 +3383,21 @@ def split_content_into_batches(
             current_batch = test_content
             current_batch_has_content = True
 
-        # 逐个처리새로 추가뉴스来源
+        # 하나씩처리새로 추가뉴스소스
         for source_data in report_data["new_titles"]:
             source_header = ""
             if format_type == "wework":
-                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} 条):\n\n"
+                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} 개):\n\n"
             elif format_type == "telegram":
-                source_header = f"{source_data['source_name']} ({len(source_data['titles'])} 条):\n\n"
+                source_header = f"{source_data['source_name']} ({len(source_data['titles'])} 개):\n\n"
             elif format_type == "ntfy":
-                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} 条):\n\n"
+                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} 개):\n\n"
             elif format_type == "feishu":
-                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} 条):\n\n"
+                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} 개):\n\n"
             elif format_type == "dingtalk":
-                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} 条):\n\n"
+                source_header = f"**{source_data['source_name']}** ({len(source_data['titles'])} 개):\n\n"
 
-            # 구성첫 번째条새로 추가뉴스
+            # 구성첫 번째개새로 추가뉴스
             first_news_line = ""
             if source_data["titles"]:
                 first_title_data = source_data["titles"][0]
@@ -3425,7 +3425,7 @@ def split_content_into_batches(
 
                 first_news_line = f"  1. {formatted_title}\n"
 
-            # 원본원자성확인：来源제목+첫 번째개 뉴스
+            # 원본원자성확인：소스제목+첫 번째개 뉴스
             source_with_first_news = source_header + first_news_line
             test_content = current_batch + source_with_first_news
 
@@ -3443,7 +3443,7 @@ def split_content_into_batches(
                 current_batch_has_content = True
                 start_index = 1
 
-            # 처리剩余새로 추가뉴스
+            # 처리남은새로 추가뉴스
             for j in range(start_index, len(source_data["titles"])):
                 title_data = source_data["titles"][j]
                 title_data_copy = title_data.copy()
@@ -3561,7 +3561,7 @@ def send_to_notifications(
         if not push_manager.is_in_time_range(time_range_start, time_range_end):
             now = get_beijing_time()
             print(
-                f"푸시윈도우제어：때앞시사이 {now.strftime('%H:%M')} 않에푸시시사이윈도우 {time_range_start}-{time_range_end} 내부，跳푸시"
+                f"푸시윈도우제어：때앞시사이 {now.strftime('%H:%M')} 않에푸시시사이윈도우 {time_range_start}-{time_range_end} 내부，뛰다푸시"
             )
             return results
 
@@ -3660,7 +3660,7 @@ def send_to_notifications(
     if not results:
         print("설정된 알림 채널이 없어 알림 전송을 건너뜁니다")
 
-    # 경우성공전송임의알림，그리고활성화각天만推一次，면푸시 기록
+    # 경우성공전송임의알림，그리고활성화각天만推一번，면푸시 기록
     if (
         CONFIG["PUSH_WINDOW"]["ENABLED"]
         and CONFIG["PUSH_WINDOW"]["ONCE_PER_DAY"]
@@ -3680,13 +3680,13 @@ def send_to_feishu(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """전송까지Feishu（지원분批전송）"""
+    """전송까지Feishu（지원분배치전송）"""
     headers = {"Content-Type": "application/json"}
     proxies = None
     if proxy_url:
         proxies = {"http": proxy_url, "https": proxy_url}
 
-    # 가져오기분批콘텐츠，사용Feishu专사용배치큰작은
+    # 가져오기분배치콘텐츠，사용Feishu전용사용배치큰작은
     batches = split_content_into_batches(
         report_data,
         "feishu",
@@ -3701,13 +3701,13 @@ def send_to_feishu(
     for i, batch_content in enumerate(batches, 1):
         batch_size = len(batch_content.encode("utf-8"))
         print(
-            f"전송Feishu第 {i}/{len(batches)} 배치，큰작은：{batch_size} 바이트 [{report_type}]"
+            f"전송Feishu {i}/{len(batches)} 배치，큰작은：{batch_size} 바이트 [{report_type}]"
         )
 
         # 배치 식별자 추가
         if len(batches) > 1:
-            batch_header = f"**[第 {i}/{len(batches)} 배치]**\n\n"
-            # 배치标识插入까지适때위치（에통계제목之뒤）
+            batch_header = f"**[ {i}/{len(batches)} 배치]**\n\n"
+            # 배치식별자 삽입까지적합때위치（에통계제목의뒤）
             if "📊 **인기 키워드통계**" in batch_content:
                 batch_content = batch_content.replace(
                     "📊 **인기 키워드통계**\n\n", f"📊 **인기 키워드통계** {batch_header}"
@@ -3746,12 +3746,12 @@ def send_to_feishu(
                 else:
                     error_msg = result.get("msg") or result.get("StatusMessage", "알 수 없음오류")
                     print(
-                        f"Feishu第 {i}/{len(batches)} 배치전송실패 [{report_type}]，오류：{error_msg}"
+                        f"Feishu {i}/{len(batches)} 배치전송실패 [{report_type}]，오류：{error_msg}"
                     )
                     return False
             else:
                 print(
-                    f"Feishu第 {i}/{len(batches)} 배치전송실패 [{report_type}]，상태 코드：{response.status_code}"
+                    f"Feishu {i}/{len(batches)} 배치전송실패 [{report_type}]，상태 코드：{response.status_code}"
                 )
                 return False
         except Exception as e:
@@ -3770,13 +3770,13 @@ def send_to_dingtalk(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """전송까지DingTalk（지원분批전송）"""
+    """전송까지DingTalk（지원분배치전송）"""
     headers = {"Content-Type": "application/json"}
     proxies = None
     if proxy_url:
         proxies = {"http": proxy_url, "https": proxy_url}
 
-    # 가져오기분批콘텐츠，사용DingTalk专사용배치큰작은
+    # 가져오기분배치콘텐츠，사용DingTalk전용사용배치큰작은
     batches = split_content_into_batches(
         report_data,
         "dingtalk",
@@ -3791,13 +3791,13 @@ def send_to_dingtalk(
     for i, batch_content in enumerate(batches, 1):
         batch_size = len(batch_content.encode("utf-8"))
         print(
-            f"전송DingTalk第 {i}/{len(batches)} 배치，큰작은：{batch_size} 바이트 [{report_type}]"
+            f"전송DingTalk {i}/{len(batches)} 배치，큰작은：{batch_size} 바이트 [{report_type}]"
         )
 
         # 배치 식별자 추가
         if len(batches) > 1:
-            batch_header = f"**[第 {i}/{len(batches)} 배치]**\n\n"
-            # 배치标识插入까지适때위치（에제목之뒤）
+            batch_header = f"**[ {i}/{len(batches)} 배치]**\n\n"
+            # 배치식별자 삽입까지적합때위치（에제목의뒤）
             if "📊 **인기 키워드통계**" in batch_content:
                 batch_content = batch_content.replace(
                     "📊 **인기 키워드통계**\n\n", f"📊 **인기 키워드통계** {batch_header}\n\n"
@@ -3827,12 +3827,12 @@ def send_to_dingtalk(
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
                 else:
                     print(
-                        f"DingTalk第 {i}/{len(batches)} 배치전송실패 [{report_type}]，오류：{result.get('errmsg')}"
+                        f"DingTalk {i}/{len(batches)} 배치전송실패 [{report_type}]，오류：{result.get('errmsg')}"
                     )
                     return False
             else:
                 print(
-                    f"DingTalk第 {i}/{len(batches)} 배치전송실패 [{report_type}]，상태 코드：{response.status_code}"
+                    f"DingTalk {i}/{len(batches)} 배치전송실패 [{report_type}]，상태 코드：{response.status_code}"
                 )
                 return False
         except Exception as e:
@@ -3844,9 +3844,9 @@ def send_to_dingtalk(
 
 
 def strip_markdown(text: str) -> str:
-    """제거텍스트중 markdown 语法형식，사용에个人微信푸시"""
+    """제거텍스트중 markdown 문법형식，사용에개人微信푸시"""
 
-    # 제거粗体 **text** 또는 __text__
+    # 제거굵다体 **text** 또는 __text__
     text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
     text = re.sub(r'__(.+?)__', r'\1', text)
 
@@ -3857,9 +3857,9 @@ def strip_markdown(text: str) -> str:
     # 제거삭제线 ~~text~~
     text = re.sub(r'~~(.+?)~~', r'\1', text)
 
-    # 변환链接 [text](url) -> text url（유지 URL）
+    # 변환링크 [text](url) -> text url（유지 URL）
     text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'\1 \2', text)
-    # 경우않필요유지 URL，可로사용아래面这행（만유지제목텍스트）：
+    # 경우않필요유지 URL，가능하다로사용아래面这행（만유지제목텍스트）：
     # text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)
 
     # 제거이미지 ![alt](url) -> alt
@@ -3874,14 +3874,14 @@ def strip_markdown(text: str) -> str:
     # 제거제목符号 # ## ### 等
     text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
 
-    # 제거水平분割线 --- 또는 ***
+    # 제거水平분분할线 --- 또는 ***
     text = re.sub(r'^[\-\*]{3,}\s*$', '', text, flags=re.MULTILINE)
 
     # 제거 HTML 标签 <font color='xxx'>text</font> -> text
     text = re.sub(r'<font[^>]*>(.+?)</font>', r'\1', text)
     text = re.sub(r'<[^>]+>', '', text)
 
-    # 정리여러余空행（유지最여러两个连续空행）
+    # 정리여러余비다행（유지최여러两개连续비다행）
     text = re.sub(r'\n{3,}', '\n\n', text)
 
     return text.strip()
@@ -3895,7 +3895,7 @@ def send_to_wework(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """전송까지WeWork（지원분批전송，지원 markdown 및 text 两种형식）"""
+    """전송까지WeWork（지원분배치전송，지원 markdown 및 text 两종류형식）"""
     headers = {"Content-Type": "application/json"}
     proxies = None
     if proxy_url:
@@ -3910,7 +3910,7 @@ def send_to_wework(
     else:
         print(f"WeWork markdown 형식 사용 (그룹 봇 모드) [{report_type}]")
 
-    # 가져오기분批콘텐츠
+    # 가져오기분배치콘텐츠
     batches = split_content_into_batches(report_data, "wework", update_info, mode=mode)
 
     print(f"WeWork 메시지를 {len(batches)}개 배치로 전송 [{report_type}]")
@@ -3920,24 +3920,24 @@ def send_to_wework(
         # 배치 식별자 추가
         if len(batches) > 1:
             if is_text_mode:
-                batch_header = f"[第 {i}/{len(batches)} 배치]\n\n"
+                batch_header = f"[ {i}/{len(batches)} 배치]\n\n"
             else:
-                batch_header = f"**[第 {i}/{len(batches)} 배치]**\n\n"
+                batch_header = f"**[ {i}/{len(batches)} 배치]**\n\n"
             batch_content = batch_header + batch_content
 
         # 에 따라메시지타입구성 payload
         if is_text_mode:
-            # text 형식：제거 markdown 语法
+            # text 형식：제거 markdown 문법
             plain_content = strip_markdown(batch_content)
             payload = {"msgtype": "text", "text": {"content": plain_content}}
             batch_size = len(plain_content.encode("utf-8"))
         else:
-            # markdown 형식：유지원본样
+            # markdown 형식：유지원본같은
             payload = {"msgtype": "markdown", "markdown": {"content": batch_content}}
             batch_size = len(batch_content.encode("utf-8"))
 
         print(
-            f"전송WeWork第 {i}/{len(batches)} 배치，큰작은：{batch_size} 바이트 [{report_type}]"
+            f"전송WeWork {i}/{len(batches)} 배치，큰작은：{batch_size} 바이트 [{report_type}]"
         )
 
         try:
@@ -3953,12 +3953,12 @@ def send_to_wework(
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
                 else:
                     print(
-                        f"WeWork第 {i}/{len(batches)} 배치전송실패 [{report_type}]，오류：{result.get('errmsg')}"
+                        f"WeWork {i}/{len(batches)} 배치전송실패 [{report_type}]，오류：{result.get('errmsg')}"
                     )
                     return False
             else:
                 print(
-                    f"WeWork第 {i}/{len(batches)} 배치전송실패 [{report_type}]，상태 코드：{response.status_code}"
+                    f"WeWork {i}/{len(batches)} 배치전송실패 [{report_type}]，상태 코드：{response.status_code}"
                 )
                 return False
         except Exception as e:
@@ -3978,7 +3978,7 @@ def send_to_telegram(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """전송까지Telegram（지원분批전송）"""
+    """전송까지Telegram（지원분배치전송）"""
     headers = {"Content-Type": "application/json"}
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
 
@@ -3986,7 +3986,7 @@ def send_to_telegram(
     if proxy_url:
         proxies = {"http": proxy_url, "https": proxy_url}
 
-    # 가져오기분批콘텐츠
+    # 가져오기분배치콘텐츠
     batches = split_content_into_batches(
         report_data, "telegram", update_info, mode=mode
     )
@@ -3997,12 +3997,12 @@ def send_to_telegram(
     for i, batch_content in enumerate(batches, 1):
         batch_size = len(batch_content.encode("utf-8"))
         print(
-            f"전송Telegram第 {i}/{len(batches)} 배치，큰작은：{batch_size} 바이트 [{report_type}]"
+            f"전송Telegram {i}/{len(batches)} 배치，큰작은：{batch_size} 바이트 [{report_type}]"
         )
 
         # 배치 식별자 추가
         if len(batches) > 1:
-            batch_header = f"<b>[第 {i}/{len(batches)} 배치]</b>\n\n"
+            batch_header = f"<b>[ {i}/{len(batches)} 배치]</b>\n\n"
             batch_content = batch_header + batch_content
 
         payload = {
@@ -4025,12 +4025,12 @@ def send_to_telegram(
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
                 else:
                     print(
-                        f"Telegram第 {i}/{len(batches)} 배치전송실패 [{report_type}]，오류：{result.get('description')}"
+                        f"Telegram {i}/{len(batches)} 배치전송실패 [{report_type}]，오류：{result.get('description')}"
                     )
                     return False
             else:
                 print(
-                    f"Telegram第 {i}/{len(batches)} 배치전송실패 [{report_type}]，상태 코드：{response.status_code}"
+                    f"Telegram {i}/{len(batches)} 배치전송실패 [{report_type}]，상태 코드：{response.status_code}"
                 )
                 return False
         except Exception as e:
@@ -4066,13 +4066,13 @@ def send_to_email(
             # 사용부터定义 SMTP 설정
             smtp_server = custom_smtp_server
             smtp_port = int(custom_smtp_port)
-            # 에 따라端口판단加密方式：465=SSL, 587=TLS
+            # 에 따라端口판단더하다密方式：465=SSL, 587=TLS
             if smtp_port == 465:
                 use_tls = False  # SSL 모드（SMTP_SSL）
             elif smtp_port == 587:
                 use_tls = True   # TLS 모드（STARTTLS）
             else:
-                # 其他端口优先尝试 TLS（更안전성，更广泛지원）
+                # 그他端口优먼저尝试 TLS（更안전성，更广泛지원）
                 use_tls = True
         elif domain in SMTP_CONFIGS:
             # 사용预设설정
@@ -4104,19 +4104,19 @@ def send_to_email(
         subject = f"TrendRadar 인기분분석 보고서 - {report_type} - {now.strftime('%m월%d일 %H:%M')}"
         msg["Subject"] = Header(subject, "utf-8")
 
-        # 설정其他标准 header
+        # 설정그他标准 header
         msg["MIME-Version"] = "1.0"
         msg["Date"] = formatdate(localtime=True)
         msg["Message-ID"] = make_msgid()
 
-        # 추가纯텍스트部분（作로备选）
+        # 추가纯텍스트부분분（작업로备选）
         text_content = f"""
 TrendRadar 인기분분석 보고서
 ========================
 보고서타입：{report_type}
 생성시사이：{now.strftime('%Y-%m-%d %H:%M:%S')}
 
-请사용지원HTML이메일客户端查看전체보고서콘텐츠。
+요청하다사용지원HTML이메일客户端查보다전체보고서콘텐츠。
         """
         text_part = MIMEText(text_content, "plain", "utf-8")
         msg.attach(text_part)
@@ -4132,7 +4132,7 @@ TrendRadar 인기분분석 보고서
             if use_tls:
                 # TLS 모드
                 server = smtplib.SMTP(smtp_server, smtp_port, timeout=30)
-                server.set_debuglevel(0)  # 设로1可로查看详细디버그정보
+                server.set_debuglevel(0)  # 设로1가능하다로查보다详가늘다디버그정보
                 server.ehlo()
                 server.starttls()
                 server.ehlo()
@@ -4191,14 +4191,14 @@ def send_to_ntfy(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """전송까지ntfy（지원분批전송，严格遵守4KB제한）"""
-    # 避免 HTTP header 编码问题
+    """전송까지ntfy（지원분배치전송，严格遵守4KB제한）"""
+    # 避免 HTTP header 编码묻다题
     report_type_en_map = {
         "때일요약": "Daily Summary",
         "때앞순위요약": "Current Ranking",
         "증분업데이트": "Incremental Update",
-        "实시증분": "Realtime Incremental", 
-        "实시때앞순위": "Realtime Current Ranking",  
+        "실제시증분": "Realtime Incremental", 
+        "실제시때앞순위": "Realtime Current Ranking",  
     }
     report_type_en = report_type_en_map.get(report_type, "News Report") 
 
@@ -4223,7 +4223,7 @@ def send_to_ntfy(
     if proxy_url:
         proxies = {"http": proxy_url, "https": proxy_url}
 
-    # 가져오기분批콘텐츠，사용ntfy专사용4KB제한
+    # 가져오기분배치콘텐츠，사용ntfy전용사용4KB제한
     batches = split_content_into_batches(
         report_data, "ntfy", update_info, max_bytes=3800, mode=mode
     )
@@ -4231,8 +4231,8 @@ def send_to_ntfy(
     total_batches = len(batches)
     print(f"ntfy 메시지를 {total_batches}개 배치로 전송 [{report_type}]")
 
-    # 배치 순서 반전，得에ntfy客户端표시시순서올바름
-    # ntfy표시최신메시지에위面，所로我们에서마지막一批시작푸시
+    # 배치 순서 반전，얻다에ntfy客户端표시시순서올바름
+    # ntfy표시최신메시지에위面，所로我들에서마지막一배치시작푸시
     reversed_batches = list(reversed(batches))
     
     print(f"ntfy는 역순으로 푸시합니다 (마지막 배치부터 먼저), 클라이언트 표시 순서가 올바르게 되도록 합니다")
@@ -4245,7 +4245,7 @@ def send_to_ntfy(
         
         batch_size = len(batch_content.encode("utf-8"))
         print(
-            f"전송ntfy第 {actual_batch_num}/{total_batches} 배치（푸시순서: {idx}/{total_batches}），큰작은：{batch_size} 바이트 [{report_type}]"
+            f"전송ntfy {actual_batch_num}/{total_batches} 배치（푸시순서: {idx}/{total_batches}），큰작은：{batch_size} 바이트 [{report_type}]"
         )
 
         # 메시지 크기 확인，보장않초과4KB
@@ -4255,7 +4255,7 @@ def send_to_ntfy(
         # 배치 식별자 추가（사용올바름배치번호）
         current_headers = headers.copy()
         if total_batches > 1:
-            batch_header = f"**[第 {actual_batch_num}/{total_batches} 배치]**\n\n"
+            batch_header = f"**[ {actual_batch_num}/{total_batches} 배치]**\n\n"
             batch_content = batch_header + batch_content
             current_headers["Title"] = (
                 f"{report_type_en} ({actual_batch_num}/{total_batches})"
@@ -4274,15 +4274,15 @@ def send_to_ntfy(
                 print(f"ntfy {actual_batch_num}/{total_batches}번째 배치 전송 성공 [{report_type}]")
                 success_count += 1
                 if idx < total_batches:
-                    # 公共服务器建议 2-3 초，부터托管可로更짧은
+                    # 公총服务器建议 2-3 초，부터托管가능하다로更짧은
                     interval = 2 if "ntfy.sh" in server_url else 1
                     time.sleep(interval)
             elif response.status_code == 429:
                 print(
-                    f"ntfy第 {actual_batch_num}/{total_batches} 배치速率제한 [{report_type}]，대기뒤재시도"
+                    f"ntfy {actual_batch_num}/{total_batches} 배치速率제한 [{report_type}]，대기뒤재시도"
                 )
                 time.sleep(10)  # 대기10초뒤재시도
-                # 재시도一次
+                # 재시도一번
                 retry_response = requests.post(
                     url,
                     headers=current_headers,
@@ -4295,11 +4295,11 @@ def send_to_ntfy(
                     success_count += 1
                 else:
                     print(
-                        f"ntfy第 {actual_batch_num}/{total_batches} 배치재시도실패，상태 코드：{retry_response.status_code}"
+                        f"ntfy {actual_batch_num}/{total_batches} 배치재시도실패，상태 코드：{retry_response.status_code}"
                     )
             elif response.status_code == 413:
                 print(
-                    f"ntfy第 {actual_batch_num}/{total_batches} 배치메시지큰당함거부 [{report_type}]，메시지큰작은：{batch_size} 바이트"
+                    f"ntfy {actual_batch_num}/{total_batches} 배치메시지큰당함거부 [{report_type}]，메시지큰작은：{batch_size} 바이트"
                 )
             else:
                 print(
@@ -4339,12 +4339,12 @@ def send_to_bark(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """전송까지Bark（지원분批전송，사용纯텍스트형식）"""
+    """전송까지Bark（지원분배치전송，사용纯텍스트형식）"""
     proxies = None
     if proxy_url:
         proxies = {"http": proxy_url, "https": proxy_url}
 
-    # 가져오기분批콘텐츠（Bark 제한로 3600 바이트로避免 413 오류）
+    # 가져오기분배치콘텐츠（Bark 제한로 3600 바이트로避免 413 오류）
     batches = split_content_into_batches(
         report_data, "wework", update_info, max_bytes=CONFIG["BARK_BATCH_SIZE"], mode=mode
     )
@@ -4352,8 +4352,8 @@ def send_to_bark(
     total_batches = len(batches)
     print(f"Bark 메시지를 {total_batches}개 배치로 전송 [{report_type}]")
 
-    # 배치 순서 반전，得에Bark客户端표시시순서올바름
-    # Bark표시최신메시지에위面，所로我们에서마지막一批시작푸시
+    # 배치 순서 반전，얻다에Bark客户端표시시순서올바름
+    # Bark표시최신메시지에위面，所로我들에서마지막一배치시작푸시
     reversed_batches = list(reversed(batches))
 
     print(f"Bark는 역순으로 푸시합니다 (마지막 배치부터 먼저), 클라이언트 표시 순서가 올바르게 되도록 합니다")
@@ -4366,21 +4366,21 @@ def send_to_bark(
 
         # 배치 식별자 추가（사용올바름배치번호）
         if total_batches > 1:
-            batch_header = f"[第 {actual_batch_num}/{total_batches} 배치]\n\n"
+            batch_header = f"[ {actual_batch_num}/{total_batches} 배치]\n\n"
             batch_content = batch_header + batch_content
 
-        # 정리 markdown 语法（Bark 않지원 markdown）
+        # 정리 markdown 문법（Bark 않지원 markdown）
         plain_content = strip_markdown(batch_content)
 
         batch_size = len(plain_content.encode("utf-8"))
         print(
-            f"전송Bark第 {actual_batch_num}/{total_batches} 배치（푸시순서: {idx}/{total_batches}），큰작은：{batch_size} 바이트 [{report_type}]"
+            f"전송Bark {actual_batch_num}/{total_batches} 배치（푸시순서: {idx}/{total_batches}），큰작은：{batch_size} 바이트 [{report_type}]"
         )
 
         # 메시지 크기 확인（Bark사용APNs，제한4KB）
         if batch_size > 4096:
             print(
-                f"경고：Bark第 {actual_batch_num}/{total_batches} 배치메시지큰（{batch_size} 바이트），可能당함거부"
+                f"경고：Bark {actual_batch_num}/{total_batches} 배치메시지큰（{batch_size} 바이트），가능당함거부"
             )
 
         # 구성JSON payload
@@ -4409,11 +4409,11 @@ def send_to_bark(
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
                 else:
                     print(
-                        f"Bark第 {actual_batch_num}/{total_batches} 배치전송실패 [{report_type}]，오류：{result.get('message', '알 수 없음오류')}"
+                        f"Bark {actual_batch_num}/{total_batches} 배치전송실패 [{report_type}]，오류：{result.get('message', '알 수 없음오류')}"
                     )
             else:
                 print(
-                    f"Bark第 {actual_batch_num}/{total_batches} 배치전송실패 [{report_type}]，상태 코드：{response.status_code}"
+                    f"Bark {actual_batch_num}/{total_batches} 배치전송실패 [{report_type}]，상태 코드：{response.status_code}"
                 )
                 try:
                     print(f"오류 상세: {response.text}")
@@ -4441,7 +4441,7 @@ def send_to_bark(
         return False
 
 
-# === 主분析器 ===
+# === 主분분석器 ===
 class NewsAnalyzer:
     """뉴스 분석기"""
 
@@ -4450,7 +4450,7 @@ class NewsAnalyzer:
         "incremental": {
             "mode_name": "증분 모드",
             "description": "증분 모드（만关注새로 추가뉴스，없음새로 추가시않푸시）",
-            "realtime_report_type": "实시증분",
+            "realtime_report_type": "실제시증분",
             "summary_report_type": "때일요약",
             "should_send_realtime": True,
             "should_generate_summary": True,
@@ -4459,7 +4459,7 @@ class NewsAnalyzer:
         "current": {
             "mode_name": "때앞순위모드",
             "description": "때앞순위모드（때앞순위일치뉴스 + 새로 추가뉴스영역 + 별시푸시）",
-            "realtime_report_type": "实시때앞순위",
+            "realtime_report_type": "실제시때앞순위",
             "summary_report_type": "때앞순위요약",
             "should_send_realtime": True,
             "should_generate_summary": True,
@@ -4491,7 +4491,7 @@ class NewsAnalyzer:
             self._check_version_update()
 
     def _detect_docker_environment(self) -> bool:
-        """检测인否실행에 Docker 컨테이너중"""
+        """检测인아니오실행에 Docker 컨테이너중"""
         try:
             if os.environ.get("DOCKER_CONTAINER") == "true":
                 return True
@@ -4540,7 +4540,7 @@ class NewsAnalyzer:
         return self.MODE_STRATEGIES.get(self.report_mode, self.MODE_STRATEGIES["daily"])
 
     def _has_notification_configured(self) -> bool:
-        """확인인否설정임의알림채널"""
+        """확인인아니오설정임의알림채널"""
         return any(
             [
                 CONFIG["FEISHU_WEBHOOK_URL"],
@@ -4560,12 +4560,12 @@ class NewsAnalyzer:
     def _has_valid_content(
         self, stats: List[Dict], new_titles: Optional[Dict] = None
     ) -> bool:
-        """확인인否있음유효뉴스콘텐츠"""
+        """확인인아니오있음유효뉴스콘텐츠"""
         if self.report_mode in ["incremental", "current"]:
-            # 증분 모드및current모드아래，만要stats있음콘텐츠就설명있음일치뉴스
+            # 증분 모드및current모드아래，만원하다stats있음콘텐츠就설명있음일치뉴스
             return any(stat["count"] > 0 for stat in stats)
         else:
-            # 당일 요약 모드아래，확인인否있음일치빈도 단어뉴스또는새로 추가뉴스
+            # 당일 요약 모드아래，확인인아니오있음일치빈도 단어뉴스또는새로 추가뉴스
             has_matched_news = any(stat["count"] > 0 for stat in stats)
             has_new_news = bool(
                 new_titles and any(len(titles) > 0 for titles in new_titles.values())
@@ -4642,7 +4642,7 @@ class NewsAnalyzer:
         failed_ids: Optional[List] = None,
         is_daily_summary: bool = False,
     ) -> Tuple[List[Dict], str]:
-        """통합분析流水线：데이터 처리 → 통계계산 → HTML생성"""
+        """통합분분석 파이프라인：데이터 처리 → 통계계산 → HTML생성"""
 
         # 통계계산
         stats, total_titles = count_word_frequency(
@@ -4710,13 +4710,13 @@ class NewsAnalyzer:
             and not self._has_valid_content(stats, new_titles)
         ):
             mode_strategy = self._get_mode_strategy()
-            if "实시" in report_type:
+            if "실제시" in report_type:
                 print(
-                    f"跳实시푸시알림：{mode_strategy['mode_name']}아래未检测까지일치뉴스"
+                    f"뛰다실제시푸시알림：{mode_strategy['mode_name']}아래未检测까지일치뉴스"
                 )
             else:
                 print(
-                    f"跳{mode_strategy['summary_report_type']}알림：未일치까지유효뉴스콘텐츠"
+                    f"뛰다{mode_strategy['summary_report_type']}알림：未일치까지유효뉴스콘텐츠"
                 )
 
         return False
@@ -4737,7 +4737,7 @@ class NewsAnalyzer:
             analysis_data
         )
 
-        # 실행분析流水线
+        # 실행분분석 파이프라인
         stats, html_file = self._run_analysis_pipeline(
             all_results,
             mode_strategy["summary_mode"],
@@ -4778,7 +4778,7 @@ class NewsAnalyzer:
             analysis_data
         )
 
-        # 실행분析流水线
+        # 실행분분석 파이프라인
         _, html_file = self._run_analysis_pipeline(
             all_results,
             mode,
@@ -4849,9 +4849,9 @@ class NewsAnalyzer:
         time_info = Path(save_titles_to_file(results, id_to_name, failed_ids)).stem
         word_groups, filter_words = load_frequency_words()
 
-        # current모드아래，实시푸시필요사용전체과거데이터来保证통계정보전체性
+        # current모드아래，실제시푸시필요사용전체과거데이터오다保证통계정보전체성
         if self.report_mode == "current":
-            # 로드전체과거데이터（已별때앞플랫폼필터링）
+            # 로드전체과거데이터（이미별때앞플랫폼필터링）
             analysis_data = self._load_analysis_data()
             if analysis_data:
                 (
@@ -4882,7 +4882,7 @@ class NewsAnalyzer:
 
                 print(f"HTML 보고서 생성 완료: {html_file}")
 
-                # 전송实시알림（사용전체과거데이터통계결과）
+                # 전송실제시알림（사용전체과거데이터통계결과）
                 summary_html = None
                 if mode_strategy["should_send_realtime"]:
                     self._send_notification_if_needed(
@@ -4896,7 +4896,7 @@ class NewsAnalyzer:
                     )
             else:
                 print("❌ 심각한 오류: 방금 저장한 데이터 파일을 읽을 수 없습니다")
-                raise RuntimeError("데이터一致性확인실패：저장뒤立即읽기실패")
+                raise RuntimeError("데이터一致성확인실패：저장뒤立即읽기실패")
         else:
             title_info = self._prepare_current_title_info(results, time_info)
             stats, html_file = self._run_analysis_pipeline(
@@ -4911,7 +4911,7 @@ class NewsAnalyzer:
             )
             print(f"HTML 보고서 생성 완료: {html_file}")
 
-            # 전송实시알림（경우필요）
+            # 전송실제시알림（경우필요）
             summary_html = None
             if mode_strategy["should_send_realtime"]:
                 self._send_notification_if_needed(
@@ -4928,7 +4928,7 @@ class NewsAnalyzer:
         summary_html = None
         if mode_strategy["should_generate_summary"]:
             if mode_strategy["should_send_realtime"]:
-                # 경우已经전송实시알림，요약만생성HTML않전송알림
+                # 경우이미经전송실제시알림，요약만생성HTML않전송알림
                 summary_html = self._generate_summary_html(
                     mode_strategy["summary_mode"]
                 )
@@ -4955,7 +4955,7 @@ class NewsAnalyzer:
         return summary_html
 
     def run(self) -> None:
-        """실행분析流程"""
+        """실행분분석流程"""
         try:
             self._initialize_and_check_config()
 
