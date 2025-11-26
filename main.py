@@ -480,7 +480,7 @@ class NotificationManager:
             
                 return f"{hour:02d}:{minute:02d}"
             except Exception as e:
-                print(f"时间格式化错误 '{time_str}': {e}")
+                print(f"시간 형식 오류 '{time_str}': {e}")
                 return time_str
     
         normalized_start = normalize_time(start_time)
@@ -490,7 +490,7 @@ class NotificationManager:
         result = normalized_start <= normalized_current <= normalized_end
     
         if not result:
-            print(f"时间窗口判断：当前 {normalized_current}，窗口 {normalized_start}-{normalized_end}")
+            print(f"시간 윈도우 판단: 현재 {normalized_current}, 윈도우 {normalized_start}-{normalized_end}")
     
         return result
 
@@ -3695,7 +3695,7 @@ def send_to_feishu(
         mode=mode,
     )
 
-    print(f"飞书消息分为 {len(batches)} 批次发送 [{report_type}]")
+    print(f"Feishu 메시지를 {len(batches)}개 배치로 전송 [{report_type}]")
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
@@ -3739,7 +3739,7 @@ def send_to_feishu(
                 result = response.json()
                 # 检查飞书的响应状态
                 if result.get("StatusCode") == 0 or result.get("code") == 0:
-                    print(f"飞书第 {i}/{len(batches)} 批次发送成功 [{report_type}]")
+                    print(f"Feishu {i}/{len(batches)}번째 배치 전송 성공 [{report_type}]")
                     # 批次间间隔
                     if i < len(batches):
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
@@ -3755,10 +3755,10 @@ def send_to_feishu(
                 )
                 return False
         except Exception as e:
-            print(f"飞书第 {i}/{len(batches)} 批次发送出错 [{report_type}]：{e}")
+            print(f"Feishu {i}/{len(batches)}번째 배치 전송 오류 [{report_type}]: {e}")
             return False
 
-    print(f"飞书所有 {len(batches)} 批次发送完成 [{report_type}]")
+    print(f"Feishu 모든 {len(batches)}개 배치 전송 완료 [{report_type}]")
     return True
 
 
@@ -3785,7 +3785,7 @@ def send_to_dingtalk(
         mode=mode,
     )
 
-    print(f"钉钉消息分为 {len(batches)} 批次发送 [{report_type}]")
+    print(f"DingTalk 메시지를 {len(batches)}개 배치로 전송 [{report_type}]")
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
@@ -3821,7 +3821,7 @@ def send_to_dingtalk(
             if response.status_code == 200:
                 result = response.json()
                 if result.get("errcode") == 0:
-                    print(f"钉钉第 {i}/{len(batches)} 批次发送成功 [{report_type}]")
+                    print(f"DingTalk {i}/{len(batches)}번째 배치 전송 성공 [{report_type}]")
                     # 批次间间隔
                     if i < len(batches):
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
@@ -3836,10 +3836,10 @@ def send_to_dingtalk(
                 )
                 return False
         except Exception as e:
-            print(f"钉钉第 {i}/{len(batches)} 批次发送出错 [{report_type}]：{e}")
+            print(f"DingTalk {i}/{len(batches)}번째 배치 전송 오류 [{report_type}]: {e}")
             return False
 
-    print(f"钉钉所有 {len(batches)} 批次发送完成 [{report_type}]")
+    print(f"DingTalk 모든 {len(batches)}개 배치 전송 완료 [{report_type}]")
     return True
 
 
@@ -3906,14 +3906,14 @@ def send_to_wework(
     is_text_mode = msg_type == "text"
 
     if is_text_mode:
-        print(f"企业微信使用 text 格式（个人微信模式）[{report_type}]")
+        print(f"WeWork text 형식 사용 (개인 WeChat 모드) [{report_type}]")
     else:
-        print(f"企业微信使用 markdown 格式（群机器人模式）[{report_type}]")
+        print(f"WeWork markdown 형식 사용 (그룹 봇 모드) [{report_type}]")
 
     # 获取分批内容
     batches = split_content_into_batches(report_data, "wework", update_info, mode=mode)
 
-    print(f"企业微信消息分为 {len(batches)} 批次发送 [{report_type}]")
+    print(f"WeWork 메시지를 {len(batches)}개 배치로 전송 [{report_type}]")
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
@@ -3947,7 +3947,7 @@ def send_to_wework(
             if response.status_code == 200:
                 result = response.json()
                 if result.get("errcode") == 0:
-                    print(f"企业微信第 {i}/{len(batches)} 批次发送成功 [{report_type}]")
+                    print(f"WeWork {i}/{len(batches)}번째 배치 전송 성공 [{report_type}]")
                     # 批次间间隔
                     if i < len(batches):
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
@@ -3962,10 +3962,10 @@ def send_to_wework(
                 )
                 return False
         except Exception as e:
-            print(f"企业微信第 {i}/{len(batches)} 批次发送出错 [{report_type}]：{e}")
+            print(f"WeWork {i}/{len(batches)}번째 배치 전송 오류 [{report_type}]: {e}")
             return False
 
-    print(f"企业微信所有 {len(batches)} 批次发送完成 [{report_type}]")
+    print(f"WeWork 모든 {len(batches)}개 배치 전송 완료 [{report_type}]")
     return True
 
 
@@ -3991,7 +3991,7 @@ def send_to_telegram(
         report_data, "telegram", update_info, mode=mode
     )
 
-    print(f"Telegram消息分为 {len(batches)} 批次发送 [{report_type}]")
+    print(f"Telegram 메시지를 {len(batches)}개 배치로 전송 [{report_type}]")
 
     # 逐批发送
     for i, batch_content in enumerate(batches, 1):
@@ -4019,7 +4019,7 @@ def send_to_telegram(
             if response.status_code == 200:
                 result = response.json()
                 if result.get("ok"):
-                    print(f"Telegram第 {i}/{len(batches)} 批次发送成功 [{report_type}]")
+                    print(f"Telegram {i}/{len(batches)}번째 배치 전송 성공 [{report_type}]")
                     # 批次间间隔
                     if i < len(batches):
                         time.sleep(CONFIG["BATCH_SEND_INTERVAL"])
@@ -4034,10 +4034,10 @@ def send_to_telegram(
                 )
                 return False
         except Exception as e:
-            print(f"Telegram第 {i}/{len(batches)} 批次发送出错 [{report_type}]：{e}")
+            print(f"Telegram {i}/{len(batches)}번째 배치 전송 오류 [{report_type}]: {e}")
             return False
 
-    print(f"Telegram所有 {len(batches)} 批次发送完成 [{report_type}]")
+    print(f"Telegram 모든 {len(batches)}개 배치 전송 완료 [{report_type}]")
     return True
 
 
@@ -4053,10 +4053,10 @@ def send_to_email(
     """发送邮件通知"""
     try:
         if not html_file_path or not Path(html_file_path).exists():
-            print(f"错误：HTML文件不存在或未提供: {html_file_path}")
+            print(f"오류: HTML 파일이 존재하지 않거나 제공되지 않음: {html_file_path}")
             return False
 
-        print(f"使用HTML文件: {html_file_path}")
+        print(f"HTML 파일 사용: {html_file_path}")
         with open(html_file_path, "r", encoding="utf-8") as f:
             html_content = f.read()
 
@@ -4081,7 +4081,7 @@ def send_to_email(
             smtp_port = config["port"]
             use_tls = config["encryption"] == "TLS"
         else:
-            print(f"未识别的邮箱服务商: {domain}，使用通用 SMTP 配置")
+            print(f"인식할 수 없는 이메일 서비스: {domain}, 일반 SMTP 설정 사용")
             smtp_server = f"smtp.{domain}"
             smtp_port = 587
             use_tls = True
@@ -4124,9 +4124,9 @@ TrendRadar 热点分析报告
         html_part = MIMEText(html_content, "html", "utf-8")
         msg.attach(html_part)
 
-        print(f"正在发送邮件到 {to_email}...")
-        print(f"SMTP 服务器: {smtp_server}:{smtp_port}")
-        print(f"发件人: {from_email}")
+        print(f"{to_email}로 이메일 전송 중...")
+        print(f"SMTP 서버: {smtp_server}:{smtp_port}")
+        print(f"발신자: {from_email}")
 
         try:
             if use_tls:
@@ -4149,32 +4149,32 @@ TrendRadar 热点分析报告
             server.send_message(msg)
             server.quit()
 
-            print(f"邮件发送成功 [{report_type}] -> {to_email}")
+            print(f"이메일 전송 성공 [{report_type}] -> {to_email}")
             return True
 
         except smtplib.SMTPServerDisconnected:
-            print(f"邮件发送失败：服务器意外断开连接，请检查网络或稍后重试")
+            print(f"이메일 전송 실패: 서버가 예기치 않게 연결을 끊었습니다. 네트워크를 확인하거나 나중에 다시 시도하세요")
             return False
 
     except smtplib.SMTPAuthenticationError as e:
-        print(f"邮件发送失败：认证错误，请检查邮箱和密码/授权码")
-        print(f"详细错误: {str(e)}")
+        print(f"이메일 전송 실패: 인증 오류, 이메일과 비밀번호/인증 코드를 확인하세요")
+        print(f"상세 오류: {str(e)}")
         return False
     except smtplib.SMTPRecipientsRefused as e:
-        print(f"邮件发送失败：收件人地址被拒绝 {e}")
+        print(f"이메일 전송 실패: 수신자 주소가 거부됨 {e}")
         return False
     except smtplib.SMTPSenderRefused as e:
-        print(f"邮件发送失败：发件人地址被拒绝 {e}")
+        print(f"이메일 전송 실패: 발신자 주소가 거부됨 {e}")
         return False
     except smtplib.SMTPDataError as e:
-        print(f"邮件发送失败：邮件数据错误 {e}")
+        print(f"이메일 전송 실패: 이메일 데이터 오류 {e}")
         return False
     except smtplib.SMTPConnectError as e:
-        print(f"邮件发送失败：无法连接到 SMTP 服务器 {smtp_server}:{smtp_port}")
-        print(f"详细错误: {str(e)}")
+        print(f"이메일 전송 실패: SMTP 서버에 연결할 수 없음 {smtp_server}:{smtp_port}")
+        print(f"상세 오류: {str(e)}")
         return False
     except Exception as e:
-        print(f"邮件发送失败 [{report_type}]：{e}")
+        print(f"이메일 전송 실패 [{report_type}]: {e}")
         import traceback
 
         traceback.print_exc()
@@ -4229,13 +4229,13 @@ def send_to_ntfy(
     )
 
     total_batches = len(batches)
-    print(f"ntfy消息分为 {total_batches} 批次发送 [{report_type}]")
+    print(f"ntfy 메시지를 {total_batches}개 배치로 전송 [{report_type}]")
 
     # 反转批次顺序，使得在ntfy客户端显示时顺序正确
     # ntfy显示最新消息在上面，所以我们从最后一批开始推送
     reversed_batches = list(reversed(batches))
     
-    print(f"ntfy将按反向顺序推送（最后批次先推送），确保客户端显示顺序正确")
+    print(f"ntfy는 역순으로 푸시합니다 (마지막 배치부터 먼저), 클라이언트 표시 순서가 올바르게 되도록 합니다")
 
     # 逐批发送（反向顺序）
     success_count = 0
@@ -4250,7 +4250,7 @@ def send_to_ntfy(
 
         # 检查消息大小，确保不超过4KB
         if batch_size > 4096:
-            print(f"警告：ntfy第 {actual_batch_num} 批次消息过大（{batch_size} 字节），可能被拒绝")
+            print(f"경고: ntfy {actual_batch_num}번째 배치 메시지가 너무 큽니다 ({batch_size} 바이트), 거부될 수 있습니다")
 
         # 添加批次标识（使用正确的批次编号）
         current_headers = headers.copy()
@@ -4271,7 +4271,7 @@ def send_to_ntfy(
             )
 
             if response.status_code == 200:
-                print(f"ntfy第 {actual_batch_num}/{total_batches} 批次发送成功 [{report_type}]")
+                print(f"ntfy {actual_batch_num}/{total_batches}번째 배치 전송 성공 [{report_type}]")
                 success_count += 1
                 if idx < total_batches:
                     # 公共服务器建议 2-3 秒，自托管可以更短
@@ -4291,7 +4291,7 @@ def send_to_ntfy(
                     timeout=30,
                 )
                 if retry_response.status_code == 200:
-                    print(f"ntfy第 {actual_batch_num}/{total_batches} 批次重试成功 [{report_type}]")
+                    print(f"ntfy {actual_batch_num}/{total_batches}번째 배치 재시도 성공 [{report_type}]")
                     success_count += 1
                 else:
                     print(
@@ -4303,31 +4303,31 @@ def send_to_ntfy(
                 )
             else:
                 print(
-                    f"ntfy第 {actual_batch_num}/{total_batches} 批次发送失败 [{report_type}]，状态码：{response.status_code}"
+                    f"ntfy {actual_batch_num}/{total_batches}번째 배치 전송 실패 [{report_type}], 상태 코드: {response.status_code}"
                 )
                 try:
-                    print(f"错误详情：{response.text}")
+                    print(f"오류 상세: {response.text}")
                 except:
                     pass
 
         except requests.exceptions.ConnectTimeout:
-            print(f"ntfy第 {actual_batch_num}/{total_batches} 批次连接超时 [{report_type}]")
+            print(f"ntfy {actual_batch_num}/{total_batches}번째 배치 연결 타임아웃 [{report_type}]")
         except requests.exceptions.ReadTimeout:
-            print(f"ntfy第 {actual_batch_num}/{total_batches} 批次读取超时 [{report_type}]")
+            print(f"ntfy {actual_batch_num}/{total_batches}번째 배치 읽기 타임아웃 [{report_type}]")
         except requests.exceptions.ConnectionError as e:
-            print(f"ntfy第 {actual_batch_num}/{total_batches} 批次连接错误 [{report_type}]：{e}")
+            print(f"ntfy {actual_batch_num}/{total_batches}번째 배치 연결 오류 [{report_type}]: {e}")
         except Exception as e:
-            print(f"ntfy第 {actual_batch_num}/{total_batches} 批次发送异常 [{report_type}]：{e}")
+            print(f"ntfy {actual_batch_num}/{total_batches}번째 배치 전송 오류 [{report_type}]: {e}")
 
     # 判断整体发送是否成功
     if success_count == total_batches:
-        print(f"ntfy所有 {total_batches} 批次发送完成 [{report_type}]")
+        print(f"ntfy 모든 {total_batches}개 배치 전송 완료 [{report_type}]")
         return True
     elif success_count > 0:
-        print(f"ntfy部分发送成功：{success_count}/{total_batches} 批次 [{report_type}]")
+        print(f"ntfy 부분 전송 성공: {success_count}/{total_batches}개 배치 [{report_type}]")
         return True  # 部分成功也视为成功
     else:
-        print(f"ntfy发送完全失败 [{report_type}]")
+        print(f"ntfy 전송 완전 실패 [{report_type}]")
         return False
 
 
@@ -4350,13 +4350,13 @@ def send_to_bark(
     )
 
     total_batches = len(batches)
-    print(f"Bark消息分为 {total_batches} 批次发送 [{report_type}]")
+    print(f"Bark 메시지를 {total_batches}개 배치로 전송 [{report_type}]")
 
     # 反转批次顺序，使得在Bark客户端显示时顺序正确
     # Bark显示最新消息在上面，所以我们从最后一批开始推送
     reversed_batches = list(reversed(batches))
 
-    print(f"Bark将按反向顺序推送（最后批次先推送），确保客户端显示顺序正确")
+    print(f"Bark는 역순으로 푸시합니다 (마지막 배치부터 먼저), 클라이언트 표시 순서가 올바르게 되도록 합니다")
 
     # 逐批发送（反向顺序）
     success_count = 0
@@ -4402,7 +4402,7 @@ def send_to_bark(
             if response.status_code == 200:
                 result = response.json()
                 if result.get("code") == 200:
-                    print(f"Bark第 {actual_batch_num}/{total_batches} 批次发送成功 [{report_type}]")
+                    print(f"Bark {actual_batch_num}/{total_batches}번째 배치 전송 성공 [{report_type}]")
                     success_count += 1
                     # 批次间间隔
                     if idx < total_batches:
@@ -4416,28 +4416,28 @@ def send_to_bark(
                     f"Bark第 {actual_batch_num}/{total_batches} 批次发送失败 [{report_type}]，状态码：{response.status_code}"
                 )
                 try:
-                    print(f"错误详情：{response.text}")
+                    print(f"오류 상세: {response.text}")
                 except:
                     pass
 
         except requests.exceptions.ConnectTimeout:
-            print(f"Bark第 {actual_batch_num}/{total_batches} 批次连接超时 [{report_type}]")
+            print(f"Bark {actual_batch_num}/{total_batches}번째 배치 연결 타임아웃 [{report_type}]")
         except requests.exceptions.ReadTimeout:
-            print(f"Bark第 {actual_batch_num}/{total_batches} 批次读取超时 [{report_type}]")
+            print(f"Bark {actual_batch_num}/{total_batches}번째 배치 읽기 타임아웃 [{report_type}]")
         except requests.exceptions.ConnectionError as e:
-            print(f"Bark第 {actual_batch_num}/{total_batches} 批次连接错误 [{report_type}]：{e}")
+            print(f"Bark {actual_batch_num}/{total_batches}번째 배치 연결 오류 [{report_type}]: {e}")
         except Exception as e:
-            print(f"Bark第 {actual_batch_num}/{total_batches} 批次发送异常 [{report_type}]：{e}")
+            print(f"Bark {actual_batch_num}/{total_batches}번째 배치 전송 예외 [{report_type}]: {e}")
 
     # 判断整体发送是否成功
     if success_count == total_batches:
-        print(f"Bark所有 {total_batches} 批次发送完成 [{report_type}]")
+        print(f"Bark 모든 {total_batches}개 배치 전송 완료 [{report_type}]")
         return True
     elif success_count > 0:
-        print(f"Bark部分发送成功：{success_count}/{total_batches} 批次 [{report_type}]")
+        print(f"Bark 부분 전송 성공: {success_count}/{total_batches}개 배치 [{report_type}]")
         return True  # 部分成功也视为成功
     else:
-        print(f"Bark发送完全失败 [{report_type}]")
+        print(f"Bark 전송 완전 실패 [{report_type}]")
         return False
 
 
@@ -4511,11 +4511,11 @@ class NewsAnalyzer:
         """设置代理配置"""
         if not self.is_github_actions and CONFIG["USE_PROXY"]:
             self.proxy_url = CONFIG["DEFAULT_PROXY"]
-            print("本地环境，使用代理")
+            print("로컬 환경, 프록시 사용")
         elif not self.is_github_actions and not CONFIG["USE_PROXY"]:
-            print("本地环境，未启用代理")
+            print("로컬 환경, 프록시 미사용")
         else:
-            print("GitHub Actions环境，不使用代理")
+            print("GitHub Actions 환경, 프록시 미사용")
 
     def _check_version_update(self) -> None:
         """检查版本更新"""
@@ -4529,11 +4529,11 @@ class NewsAnalyzer:
                     "current_version": VERSION,
                     "remote_version": remote_version,
                 }
-                print(f"发现新版本: {remote_version} (当前: {VERSION})")
+                print(f"새 버전 발견: {remote_version} (현재: {VERSION})")
             else:
-                print("版本检查完成，当前为最新版本")
+                print("버전 확인 완료, 현재 최신 버전입니다")
         except Exception as e:
-            print(f"版本检查出错: {e}")
+            print(f"버전 확인 오류: {e}")
 
     def _get_mode_strategy(self) -> Dict:
         """获取当前模式的策略配置"""
@@ -4582,18 +4582,18 @@ class NewsAnalyzer:
             for platform in CONFIG["PLATFORMS"]:
                 current_platform_ids.append(platform["id"])
 
-            print(f"当前监控平台: {current_platform_ids}")
+            print(f"현재 모니터링 플랫폼: {current_platform_ids}")
 
             all_results, id_to_name, title_info = read_all_today_titles(
                 current_platform_ids
             )
 
             if not all_results:
-                print("没有找到当天的数据")
+                print("당일 데이터를 찾을 수 없습니다")
                 return None
 
             total_titles = sum(len(titles) for titles in all_results.values())
-            print(f"读取到 {total_titles} 个标题（已按当前监控平台过滤）")
+            print(f"{total_titles}개 제목 읽기 완료 (현재 모니터링 플랫폼으로 필터링됨)")
 
             new_titles = detect_latest_new_titles(current_platform_ids)
             word_groups, filter_words = load_frequency_words()
@@ -4607,7 +4607,7 @@ class NewsAnalyzer:
                 filter_words,
             )
         except Exception as e:
-            print(f"数据加载失败: {e}")
+            print(f"데이터 로드 실패: {e}")
             return None
 
     def _prepare_current_title_info(self, results: Dict, time_info: str) -> Dict:
@@ -4701,9 +4701,9 @@ class NewsAnalyzer:
             )
             return True
         elif CONFIG["ENABLE_NOTIFICATION"] and not has_notification:
-            print("⚠️ 警告：通知功能已启用但未配置任何通知渠道，将跳过通知发送")
+            print("⚠️ 경고: 알림 기능이 활성화되었지만 알림 채널이 설정되지 않아 알림 전송을 건너뜁니다")
         elif not CONFIG["ENABLE_NOTIFICATION"]:
-            print(f"跳过{report_type}通知：通知功能已禁用")
+            print(f"{report_type} 알림 건너뛰기: 알림 기능이 비활성화됨")
         elif (
             CONFIG["ENABLE_NOTIFICATION"]
             and has_notification
@@ -4726,7 +4726,7 @@ class NewsAnalyzer:
         summary_type = (
             "当前榜单汇总" if mode_strategy["summary_mode"] == "current" else "当日汇总"
         )
-        print(f"生成{summary_type}报告...")
+        print(f"{summary_type} 보고서 생성 중...")
 
         # 加载分析数据
         analysis_data = self._load_analysis_data()
@@ -4749,7 +4749,7 @@ class NewsAnalyzer:
             is_daily_summary=True,
         )
 
-        print(f"{summary_type}报告已生成: {html_file}")
+        print(f"{summary_type} 보고서 생성 완료: {html_file}")
 
         # 发送通知
         self._send_notification_if_needed(
@@ -4767,7 +4767,7 @@ class NewsAnalyzer:
     def _generate_summary_html(self, mode: str = "daily") -> Optional[str]:
         """生成汇总HTML"""
         summary_type = "当前榜单汇总" if mode == "current" else "当日汇总"
-        print(f"生成{summary_type}HTML...")
+        print(f"{summary_type} HTML 생성 중...")
 
         # 加载分析数据
         analysis_data = self._load_analysis_data()
@@ -4790,29 +4790,29 @@ class NewsAnalyzer:
             is_daily_summary=True,
         )
 
-        print(f"{summary_type}HTML已生成: {html_file}")
+        print(f"{summary_type} HTML 생성 완료: {html_file}")
         return html_file
 
     def _initialize_and_check_config(self) -> None:
         """通用初始化和配置检查"""
         now = get_beijing_time()
-        print(f"当前北京时间: {now.strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"현재 북경 시간: {now.strftime('%Y-%m-%d %H:%M:%S')}")
 
         if not CONFIG["ENABLE_CRAWLER"]:
-            print("爬虫功能已禁用（ENABLE_CRAWLER=False），程序退出")
+            print("크롤러 기능이 비활성화됨 (ENABLE_CRAWLER=False), 프로그램 종료")
             return
 
         has_notification = self._has_notification_configured()
         if not CONFIG["ENABLE_NOTIFICATION"]:
-            print("通知功能已禁用（ENABLE_NOTIFICATION=False），将只进行数据抓取")
+            print("알림 기능이 비활성화됨 (ENABLE_NOTIFICATION=False), 데이터 수집만 진행")
         elif not has_notification:
-            print("未配置任何通知渠道，将只进行数据抓取，不发送通知")
+            print("설정된 알림 채널이 없어 데이터 수집만 진행하고 알림을 보내지 않습니다")
         else:
-            print("通知功能已启用，将发送通知")
+            print("알림 기능이 활성화됨, 알림을 전송합니다")
 
         mode_strategy = self._get_mode_strategy()
-        print(f"报告模式: {self.report_mode}")
-        print(f"运行模式: {mode_strategy['description']}")
+        print(f"보고서 모드: {self.report_mode}")
+        print(f"실행 모드: {mode_strategy['description']}")
 
     def _crawl_data(self) -> Tuple[Dict, Dict, List]:
         """执行数据爬取"""
@@ -4826,7 +4826,7 @@ class NewsAnalyzer:
         print(
             f"配置的监控平台: {[p.get('name', p['id']) for p in CONFIG['PLATFORMS']]}"
         )
-        print(f"开始爬取数据，请求间隔 {self.request_interval} 毫秒")
+        print(f"데이터 수집 시작, 요청 간격 {self.request_interval} 밀리초")
         ensure_directory_exists("output")
 
         results, id_to_name, failed_ids = self.data_fetcher.crawl_websites(
@@ -4834,7 +4834,7 @@ class NewsAnalyzer:
         )
 
         title_file = save_titles_to_file(results, id_to_name, failed_ids)
-        print(f"标题已保存到: {title_file}")
+        print(f"제목 저장 완료: {title_file}")
 
         return results, id_to_name, failed_ids
 
@@ -4880,7 +4880,7 @@ class NewsAnalyzer:
 
                 combined_id_to_name = {**historical_id_to_name, **id_to_name}
 
-                print(f"HTML报告已生成: {html_file}")
+                print(f"HTML 보고서 생성 완료: {html_file}")
 
                 # 发送实时通知（使用完整历史数据的统计结果）
                 summary_html = None
@@ -4895,7 +4895,7 @@ class NewsAnalyzer:
                         html_file_path=html_file,
                     )
             else:
-                print("❌ 严重错误：无法读取刚保存的数据文件")
+                print("❌ 심각한 오류: 방금 저장한 데이터 파일을 읽을 수 없습니다")
                 raise RuntimeError("数据一致性检查失败：保存后立即读取失败")
         else:
             title_info = self._prepare_current_title_info(results, time_info)
@@ -4909,7 +4909,7 @@ class NewsAnalyzer:
                 id_to_name,
                 failed_ids=failed_ids,
             )
-            print(f"HTML报告已生成: {html_file}")
+            print(f"HTML 보고서 생성 완료: {html_file}")
 
             # 发送实时通知（如果需要）
             summary_html = None
@@ -4940,17 +4940,17 @@ class NewsAnalyzer:
         if self._should_open_browser() and html_file:
             if summary_html:
                 summary_url = "file://" + str(Path(summary_html).resolve())
-                print(f"正在打开汇总报告: {summary_url}")
+                print(f"요약 보고서 열기: {summary_url}")
                 webbrowser.open(summary_url)
             else:
                 file_url = "file://" + str(Path(html_file).resolve())
-                print(f"正在打开HTML报告: {file_url}")
+                print(f"HTML 보고서 열기: {file_url}")
                 webbrowser.open(file_url)
         elif self.is_docker_container and html_file:
             if summary_html:
-                print(f"汇总报告已生成（Docker环境）: {summary_html}")
+                print(f"요약 보고서 생성 완료 (Docker 환경): {summary_html}")
             else:
-                print(f"HTML报告已生成（Docker环境）: {html_file}")
+                print(f"HTML 보고서 생성 완료 (Docker 환경): {html_file}")
 
         return summary_html
 
@@ -4966,7 +4966,7 @@ class NewsAnalyzer:
             self._execute_mode_strategy(mode_strategy, results, id_to_name, failed_ids)
 
         except Exception as e:
-            print(f"分析流程执行出错: {e}")
+            print(f"분석 프로세스 실행 오류: {e}")
             raise
 
 
@@ -4975,13 +4975,13 @@ def main():
         analyzer = NewsAnalyzer()
         analyzer.run()
     except FileNotFoundError as e:
-        print(f"❌ 配置文件错误: {e}")
-        print("\n请确保以下文件存在:")
+        print(f"❌ 설정 파일 오류: {e}")
+        print("\n다음 파일이 존재하는지 확인하세요:")
         print("  • config/config.yaml")
         print("  • config/frequency_words.txt")
-        print("\n参考项目文档进行正确配置")
+        print("\n프로젝트 문서를 참고하여 올바르게 설정하세요")
     except Exception as e:
-        print(f"❌ 程序运行错误: {e}")
+        print(f"❌ 프로그램 실행 오류: {e}")
         raise
 
 
