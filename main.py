@@ -1309,7 +1309,7 @@ def count_word_frequency(
                             results_to_process[source_id] = filtered_titles
 
                 print(
-                    f"때앞순위모드：최신시사이 {latest_time}，筛选나가다 {sum(len(titles) for titles in results_to_process.values())} 개때앞순위뉴스"
+                    f"때앞순위모드：최신시사이 {latest_time}，필터링나가다 {sum(len(titles) for titles in results_to_process.values())} 개때앞순위뉴스"
                 )
             else:
                 results_to_process = results
@@ -1531,7 +1531,7 @@ def count_word_frequency(
             )
 
     stats = []
-    # 생성 group_key 까지위치및최큰수映射
+    # 생성 group_key 까지위치및최큰수매핑
     group_key_to_position = {
         group["group_key"]: idx for idx, group in enumerate(word_groups)
     }
@@ -1554,7 +1554,7 @@ def count_word_frequency(
             ),
         )
 
-        # 해야 하다사용최큰표시수제한（우선순위：单独설정 > 전역설정）
+        # 해야 하다사용최큰표시수제한（우선순위：별도설정 > 전역설정）
         group_max_count = group_key_to_max_count.get(group_key, 0)
         if group_max_count == 0:
             # 사용전역설정
@@ -1602,7 +1602,7 @@ def prepare_report_data(
     # 에증분 모드아래숨기기새로 추가뉴스영역
     hide_new_section = mode == "incremental"
 
-    # 만있음에아님숨기기모드아래才처리새로 추가뉴스부분분
+    # 만있음에아님숨기기모드아래만처리새로 추가뉴스부분분
     if not hide_new_section:
         filtered_new_titles = {}
         if new_titles and id_to_name:
@@ -1689,7 +1689,7 @@ def prepare_report_data(
 def format_title_for_platform(
     platform: str, title_data: Dict, show_source: bool = True
 ) -> str:
-    """통합제목형식化메서드"""
+    """통합제목형식화메서드"""
     rank_display = format_rank_display(
         title_data["ranks"], title_data["rank_threshold"], platform
     )
@@ -2354,7 +2354,7 @@ def render_html_content(
 
     html += f"{total_titles} 개"
 
-    # 계산筛选된인기뉴스수
+    # 계산필터링된인기뉴스수
     hot_news_count = sum(len(stat["titles"]) for stat in report_data["stats"])
 
     html += """</span>
@@ -2393,14 +2393,14 @@ def render_html_content(
                     </ul>
                 </div>"""
 
-    # 처리主원하다통계데이터
+    # 처리주원하다통계데이터
     if report_data["stats"]:
         total_count = len(report_data["stats"])
 
         for i, stat in enumerate(report_data["stats"], 1):
             count = stat["count"]
 
-            # 确定뜨겁다度등급
+            # 확정뜨겁다도등급
             if count >= 10:
                 count_class = "hot"
             elif count >= 5:
@@ -2420,7 +2420,7 @@ def render_html_content(
                         <div class="word-index">{i}/{total_count}</div>
                     </div>"""
 
-            # 처리각단어 그룹아래뉴스제목，각개 뉴스标위순번
+            # 처리각단어 그룹아래뉴스제목，각개 뉴스표시위순번
             for j, title_data in enumerate(stat["titles"], 1):
                 is_new = title_data.get("is_new", False)
                 new_class = "new" if is_new else ""
@@ -2439,7 +2439,7 @@ def render_html_content(
                     max_rank = max(ranks)
                     rank_threshold = title_data.get("rank_threshold", 10)
 
-                    # 确定순위등급
+                    # 확정순위등급
                     if min_rank <= 3:
                         rank_class = "top"
                     elif min_rank <= rank_threshold:
@@ -2457,7 +2457,7 @@ def render_html_content(
                 # 처리시사이표시
                 time_display = title_data.get("time_display", "")
                 if time_display:
-                    # 간단하다化시사이표시형식，波浪线교체로~
+                    # 간단하다화시사이표시형식，물결선교체로~
                     simplified_time = (
                         time_display.replace(" ~ ", "~")
                         .replace("[", "")
@@ -2508,7 +2508,7 @@ def render_html_content(
                     <div class="new-source-group">
                         <div class="new-source-title">{escaped_source} · {titles_count}개</div>"""
 
-            # 로새로 추가뉴스也추가순번
+            # 로새로 추가뉴스도추가순번
             for idx, title_data in enumerate(source_data["titles"], 1):
                 ranks = title_data.get("ranks", [])
 
@@ -2563,7 +2563,7 @@ def render_html_content(
                 <div class="footer-content">
                     에 의해 <span class="project-name">TrendRadar</span> 생성 · 
                     <a href="https://github.com/sansan0/TrendRadar" target="_blank" class="footer-link">
-                        GitHub 开源항목目
+                        GitHub 오픈소스항목항목
                     </a>"""
 
     if update_info:
@@ -2588,14 +2588,14 @@ def render_html_content(
                     button.disabled = true;
                     window.scrollTo(0, 0);
                     
-                    // 대기页面稳定
+                    // 대기페이지 안정
                     await new Promise(resolve => setTimeout(resolve, 200));
                     
                     // 스크린샷앞숨기기별버튼
                     const buttons = document.querySelector('.save-buttons');
                     buttons.style.visibility = 'hidden';
                     
-                    // 다음번대기보장별버튼完全숨기기
+                    // 다음번대기보장별버튼완전히숨기기
                     await new Promise(resolve => setTimeout(resolve, 100));
                     
                     const container = document.querySelector('.container');
@@ -2628,7 +2628,7 @@ def render_html_content(
                     link.download = filename;
                     link.href = canvas.toDataURL('image/png', 1.0);
                     
-                    // 触发아래로드
+                    // 트리거아래로드
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
@@ -2669,7 +2669,7 @@ def render_html_content(
                     const header = container.querySelector('.header');
                     const footer = container.querySelector('.footer');
                     
-                    // 계산요소위치및높은度
+                    // 계산요소위치및높은도
                     const containerRect = container.getBoundingClientRect();
                     const elements = [];
                     
@@ -2694,7 +2694,7 @@ def render_html_content(
                         });
                     }
                     
-                    // 별word-group분组처리news-item
+                    // 별word-group분조처리news-item
                     wordGroups.forEach(group => {
                         const groupRect = group.getBoundingClientRect();
                         const groupNewsItems = group.querySelectorAll('.news-item');
@@ -2749,7 +2749,7 @@ def render_html_content(
                         height: footer.offsetHeight
                     });
                     
-                    // 계산분분할点
+                    // 계산분분할포인트
                     const segments = [];
                     let currentSegment = { start: 0, end: 0, height: 0, includeHeader: true };
                     let headerHeight = header.offsetHeight;
@@ -2761,7 +2761,7 @@ def render_html_content(
                         
                         // 확인인아니오필요생성새분단계
                         if (potentialHeight > maxHeight && currentSegment.height > headerHeight) {
-                            // 에앞一개요소종료处분분할
+                            // 에앞하나개요소종료곳분분할
                             currentSegment.end = elements[i - 1].bottom;
                             segments.push(currentSegment);
                             
@@ -2822,7 +2822,7 @@ def render_html_content(
                         // 대기DOM업데이트
                         await new Promise(resolve => setTimeout(resolve, 100));
                         
-                        // 사용html2canvas截取特定영역
+                        // 사용html2canvas특정 부분 추출영역
                         const canvas = await html2canvas(clonedContainer, {
                             backgroundColor: '#ffffff',
                             scale: scale,
@@ -2844,7 +2844,7 @@ def render_html_content(
                         document.body.removeChild(tempContainer);
                     }
                     
-                    // 恢복잡하다별버튼표시
+                    // 복원복잡하다별버튼표시
                     buttons.style.visibility = 'visible';
                     
                     // 아래로드모든이미지
@@ -2859,11 +2859,11 @@ def render_html_content(
                         link.click();
                         document.body.removeChild(link);
                         
-                        // 延迟一아래避免浏览器阻止여러아래로드
+                        // 1초 지연아래브라우저 차단 방지여러아래로드
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
                     
-                    button.textContent = `이미저장 ${segments.length} 张이미지!`;
+                    button.textContent = `이미저장 ${segments.length} 장이미지!`;
                     setTimeout(() => {
                         button.textContent = originalText;
                         button.disabled = false;
@@ -3271,7 +3271,7 @@ def split_content_into_batches(
                 if len(stat["titles"]) > 1:
                     first_news_line += "\n"
 
-            # 원본원자성확인：단어 그룹제목+첫 번째개 뉴스반드시반드시一일어나다처리
+            # 원본원자성확인：단어 그룹제목+첫 번째개 뉴스반드시반드시하나일어나다처리
             word_with_first_news = word_header + first_news_line
             test_content = current_batch + word_with_first_news
 
@@ -3279,7 +3279,7 @@ def split_content_into_batches(
                 len(test_content.encode("utf-8")) + len(base_footer.encode("utf-8"))
                 >= max_bytes
             ):
-                # 때앞배치容纳않아래，开启새배치
+                # 때앞배치수용않아래，활성화새배치
                 if current_batch_has_content:
                     batches.append(current_batch + base_footer)
                 current_batch = base_header + stats_header + word_with_first_news
@@ -3290,7 +3290,7 @@ def split_content_into_batches(
                 current_batch_has_content = True
                 start_index = 1
 
-            # 처리남은뉴스개目
+            # 처리남은뉴스개항목
             for j in range(start_index, len(stat["titles"])):
                 title_data = stat["titles"][j]
                 if format_type == "wework":
@@ -3333,7 +3333,7 @@ def split_content_into_batches(
                     current_batch = test_content
                     current_batch_has_content = True
 
-            # 단어 그룹사이분隔符
+            # 단어 그룹사이분구분자
             if i < len(report_data["stats"]) - 1:
                 separator = ""
                 if format_type == "wework":
@@ -3354,7 +3354,7 @@ def split_content_into_batches(
                 ):
                     current_batch = test_content
 
-    # 처리새로 추가뉴스（同같은보장소스제목+첫 번째개 뉴스원본원자성）
+    # 처리새로 추가뉴스（동일같은보장소스제목+첫 번째개 뉴스원본원자성）
     if report_data["new_titles"]:
         new_header = ""
         if format_type == "wework":
@@ -3660,7 +3660,7 @@ def send_to_notifications(
     if not results:
         print("설정된 알림 채널이 없어 알림 전송을 건너뜁니다")
 
-    # 경우성공전송임의알림，그리고활성화각天만推一번，면푸시 기록
+    # 경우성공전송임의알림，그리고활성화각일만푸시 1회번，면푸시 기록
     if (
         CONFIG["PUSH_WINDOW"]["ENABLED"]
         and CONFIG["PUSH_WINDOW"]["ONCE_PER_DAY"]
@@ -3713,7 +3713,7 @@ def send_to_feishu(
                     "📊 **인기 키워드통계**\n\n", f"📊 **인기 키워드통계** {batch_header}"
                 )
             else:
-                # 경우없음통계제목，직접에开头추가
+                # 경우없음통계제목，직접에시작추가
                 batch_content = batch_header + batch_content
 
         total_titles = sum(
@@ -3803,7 +3803,7 @@ def send_to_dingtalk(
                     "📊 **인기 키워드통계**\n\n", f"📊 **인기 키워드통계** {batch_header}\n\n"
                 )
             else:
-                # 경우없음통계제목，직접에开头추가
+                # 경우없음통계제목，직접에시작추가
                 batch_content = batch_header + batch_content
 
         payload = {
@@ -3844,44 +3844,44 @@ def send_to_dingtalk(
 
 
 def strip_markdown(text: str) -> str:
-    """제거텍스트중 markdown 문법형식，사용에개人微信푸시"""
+    """제거텍스트중 markdown 문법형식，사용에개개인 WeChat푸시"""
 
-    # 제거굵다体 **text** 또는 __text__
+    # 제거굵다체 **text** 또는 __text__
     text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
     text = re.sub(r'__(.+?)__', r'\1', text)
 
-    # 제거斜体 *text* 또는 _text_
+    # 제거이탤릭 *text* 또는 _text_
     text = re.sub(r'\*(.+?)\*', r'\1', text)
     text = re.sub(r'_(.+?)_', r'\1', text)
 
-    # 제거삭제线 ~~text~~
+    # 제거삭제선 ~~text~~
     text = re.sub(r'~~(.+?)~~', r'\1', text)
 
     # 변환링크 [text](url) -> text url（유지 URL）
     text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'\1 \2', text)
-    # 경우않필요유지 URL，가능하다로사용아래面这행（만유지제목텍스트）：
+    # 경우않필요유지 URL，가능하다로사용아래아래행（만유지제목텍스트）：
     # text = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', text)
 
     # 제거이미지 ![alt](url) -> alt
     text = re.sub(r'!\[(.+?)\]\(.+?\)', r'\1', text)
 
-    # 제거행내부代码 `code`
+    # 제거행내부코드 `code`
     text = re.sub(r'`(.+?)`', r'\1', text)
 
-    # 제거引사용符号 >
+    # 제거인용사용기호 >
     text = re.sub(r'^>\s*', '', text, flags=re.MULTILINE)
 
-    # 제거제목符号 # ## ### 等
+    # 제거제목기호 # ## ### 등
     text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
 
-    # 제거水平분분할线 --- 또는 ***
+    # 제거수평분분할선 --- 또는 ***
     text = re.sub(r'^[\-\*]{3,}\s*$', '', text, flags=re.MULTILINE)
 
-    # 제거 HTML 标签 <font color='xxx'>text</font> -> text
+    # 제거 HTML 태그 <font color='xxx'>text</font> -> text
     text = re.sub(r'<font[^>]*>(.+?)</font>', r'\1', text)
     text = re.sub(r'<[^>]+>', '', text)
 
-    # 정리여러余비다행（유지최여러两개连续비다행）
+    # 정리여러나머지비다행（유지최여러두개연속비다행）
     text = re.sub(r'\n{3,}', '\n\n', text)
 
     return text.strip()
@@ -3895,7 +3895,7 @@ def send_to_wework(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """전송까지WeWork（지원분배치전송，지원 markdown 및 text 两종류형식）"""
+    """전송까지WeWork（지원분배치전송，지원 markdown 및 text 두종류형식）"""
     headers = {"Content-Type": "application/json"}
     proxies = None
     if proxy_url:
@@ -4063,19 +4063,19 @@ def send_to_email(
         domain = from_email.split("@")[-1].lower()
 
         if custom_smtp_server and custom_smtp_port:
-            # 사용부터定义 SMTP 설정
+            # 사용부터정의 SMTP 설정
             smtp_server = custom_smtp_server
             smtp_port = int(custom_smtp_port)
-            # 에 따라端口판단더하다密方式：465=SSL, 587=TLS
+            # 에 따라포트판단더하다암호화 방식：465=SSL, 587=TLS
             if smtp_port == 465:
                 use_tls = False  # SSL 모드（SMTP_SSL）
             elif smtp_port == 587:
                 use_tls = True   # TLS 모드（STARTTLS）
             else:
-                # 그他端口优먼저尝试 TLS（更안전성，更广泛지원）
+                # 그다른 포트 우선먼저시도 TLS（더안전성，더 광범위지원）
                 use_tls = True
         elif domain in SMTP_CONFIGS:
-            # 사용预设설정
+            # 사용사전 설정설정
             config = SMTP_CONFIGS[domain]
             smtp_server = config["server"]
             smtp_port = config["port"]
@@ -4088,23 +4088,23 @@ def send_to_email(
 
         msg = MIMEMultipart("alternative")
 
-        # 严格별照 RFC 标准설정 From header
+        # 엄격히별따라 RFC 표준설정 From header
         sender_name = "TrendRadar"
         msg["From"] = formataddr((sender_name, from_email))
 
-        # 설정收件人
+        # 설정수신件人
         recipients = [addr.strip() for addr in to_email.split(",")]
         if len(recipients) == 1:
             msg["To"] = recipients[0]
         else:
             msg["To"] = ", ".join(recipients)
 
-        # 설정이메일主题
+        # 설정이메일주题
         now = get_beijing_time()
         subject = f"TrendRadar 인기분분석 보고서 - {report_type} - {now.strftime('%m월%d일 %H:%M')}"
         msg["Subject"] = Header(subject, "utf-8")
 
-        # 설정그他标准 header
+        # 설정그他표준 header
         msg["MIME-Version"] = "1.0"
         msg["Date"] = formatdate(localtime=True)
         msg["Message-ID"] = make_msgid()
@@ -4191,7 +4191,7 @@ def send_to_ntfy(
     proxy_url: Optional[str] = None,
     mode: str = "daily",
 ) -> bool:
-    """전송까지ntfy（지원분배치전송，严格遵守4KB제한）"""
+    """전송까지ntfy（지원분배치전송，엄격히遵守4KB제한）"""
     # 避免 HTTP header 编码묻다题
     report_type_en_map = {
         "때일요약": "Daily Summary",
@@ -4232,7 +4232,7 @@ def send_to_ntfy(
     print(f"ntfy 메시지를 {total_batches}개 배치로 전송 [{report_type}]")
 
     # 배치 순서 반전，얻다에ntfy客户端표시시순서올바름
-    # ntfy표시최신메시지에위面，所로我들에서마지막一배치시작푸시
+    # ntfy표시최신메시지에위면，所로我들에서마지막하나배치시작푸시
     reversed_batches = list(reversed(batches))
     
     print(f"ntfy는 역순으로 푸시합니다 (마지막 배치부터 먼저), 클라이언트 표시 순서가 올바르게 되도록 합니다")
@@ -4240,7 +4240,7 @@ def send_to_ntfy(
     # 배치별 전송（反로순서）
     success_count = 0
     for idx, batch_content in enumerate(reversed_batches, 1):
-        # 계산올바름배치번호（사용户视角번호）
+        # 계산올바름배치번호（사용户视각도번호）
         actual_batch_num = total_batches - idx + 1
         
         batch_size = len(batch_content.encode("utf-8"))
@@ -4274,7 +4274,7 @@ def send_to_ntfy(
                 print(f"ntfy {actual_batch_num}/{total_batches}번째 배치 전송 성공 [{report_type}]")
                 success_count += 1
                 if idx < total_batches:
-                    # 公총服务器建议 2-3 초，부터托管가능하다로更짧은
+                    # 公총服务器建议 2-3 초，부터托관리가능하다로더짧은
                     interval = 2 if "ntfy.sh" in server_url else 1
                     time.sleep(interval)
             elif response.status_code == 429:
@@ -4282,7 +4282,7 @@ def send_to_ntfy(
                     f"ntfy {actual_batch_num}/{total_batches} 배치速率제한 [{report_type}]，대기뒤재시도"
                 )
                 time.sleep(10)  # 대기10초뒤재시도
-                # 재시도一번
+                # 재시도하나번
                 retry_response = requests.post(
                     url,
                     headers=current_headers,
@@ -4353,7 +4353,7 @@ def send_to_bark(
     print(f"Bark 메시지를 {total_batches}개 배치로 전송 [{report_type}]")
 
     # 배치 순서 반전，얻다에Bark客户端표시시순서올바름
-    # Bark표시최신메시지에위面，所로我들에서마지막一배치시작푸시
+    # Bark표시최신메시지에위면，所로我들에서마지막하나배치시작푸시
     reversed_batches = list(reversed(batches))
 
     print(f"Bark는 역순으로 푸시합니다 (마지막 배치부터 먼저), 클라이언트 표시 순서가 올바르게 되도록 합니다")
@@ -4361,7 +4361,7 @@ def send_to_bark(
     # 배치별 전송（反로순서）
     success_count = 0
     for idx, batch_content in enumerate(reversed_batches, 1):
-        # 계산올바름배치번호（사용户视角번호）
+        # 계산올바름배치번호（사용户视각도번호）
         actual_batch_num = total_batches - idx + 1
 
         # 배치 식별자 추가（사용올바름배치번호）
@@ -4441,15 +4441,15 @@ def send_to_bark(
         return False
 
 
-# === 主분분석器 ===
+# === 주분분석器 ===
 class NewsAnalyzer:
     """뉴스 분석기"""
 
-    # 모드策略定义
+    # 모드策略정의
     MODE_STRATEGIES = {
         "incremental": {
             "mode_name": "증분 모드",
-            "description": "증분 모드（만关注새로 추가뉴스，없음새로 추가시않푸시）",
+            "description": "증분 모드（만관련注새로 추가뉴스，없음새로 추가시않푸시）",
             "realtime_report_type": "실제시증분",
             "summary_report_type": "때일요약",
             "should_send_realtime": True,
@@ -4562,7 +4562,7 @@ class NewsAnalyzer:
     ) -> bool:
         """확인인아니오있음유효뉴스콘텐츠"""
         if self.report_mode in ["incremental", "current"]:
-            # 증분 모드및current모드아래，만원하다stats있음콘텐츠就설명있음일치뉴스
+            # 증분 모드및current모드아래，만원하다stats있음콘텐츠설명있음일치뉴스
             return any(stat["count"] > 0 for stat in stats)
         else:
             # 당일 요약 모드아래，확인인아니오있음일치빈도 단어뉴스또는새로 추가뉴스
@@ -4611,7 +4611,7 @@ class NewsAnalyzer:
             return None
 
     def _prepare_current_title_info(self, results: Dict, time_info: str) -> Dict:
-        """에서때앞抓取결과구성제목정보"""
+        """에서때앞抓취득결과구성제목정보"""
         title_info = {}
         for source_id, titles_data in results.items():
             title_info[source_id] = {}
@@ -4794,7 +4794,7 @@ class NewsAnalyzer:
         return html_file
 
     def _initialize_and_check_config(self) -> None:
-        """通사용초기화및설정확인"""
+        """통해사용초기화및설정확인"""
         now = get_beijing_time()
         print(f"현재 북경 시간: {now.strftime('%Y-%m-%d %H:%M:%S')}")
 
@@ -4896,7 +4896,7 @@ class NewsAnalyzer:
                     )
             else:
                 print("❌ 심각한 오류: 방금 저장한 데이터 파일을 읽을 수 없습니다")
-                raise RuntimeError("데이터一致성확인실패：저장뒤立即읽기실패")
+                raise RuntimeError("데이터하나致성확인실패：저장뒤立즉읽기실패")
         else:
             title_info = self._prepare_current_title_info(results, time_info)
             stats, html_file = self._run_analysis_pipeline(
@@ -4928,7 +4928,7 @@ class NewsAnalyzer:
         summary_html = None
         if mode_strategy["should_generate_summary"]:
             if mode_strategy["should_send_realtime"]:
-                # 경우이미经전송실제시알림，요약만생성HTML않전송알림
+                # 경우이미거쳐전송실제시알림，요약만생성HTML않전송알림
                 summary_html = self._generate_summary_html(
                     mode_strategy["summary_mode"]
                 )
