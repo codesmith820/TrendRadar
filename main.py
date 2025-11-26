@@ -26,13 +26,13 @@ from urllib.parse import urlparse
 VERSION = "3.3.0"
 
 
-# === SMTP邮件配置 ===
+# === SMTP 이메일 설정 ===
 SMTP_CONFIGS = {
-    # Gmail（使用 STARTTLS）
+    # Gmail (STARTTLS 사용)
     "gmail.com": {"server": "smtp.gmail.com", "port": 587, "encryption": "TLS"},
-    # QQ邮箱（使用 SSL，更稳定）
+    # QQ 메일 (SSL 사용, 더 안정적)
     "qq.com": {"server": "smtp.qq.com", "port": 465, "encryption": "SSL"},
-    # Outlook（使用 STARTTLS）
+    # Outlook (STARTTLS 사용)
     "outlook.com": {
         "server": "smtp-mail.outlook.com",
         "port": 587,
@@ -44,34 +44,34 @@ SMTP_CONFIGS = {
         "encryption": "TLS",
     },
     "live.com": {"server": "smtp-mail.outlook.com", "port": 587, "encryption": "TLS"},
-    # 网易邮箱（使用 SSL，更稳定）
+    # NetEase 메일 (SSL 사용, 더 안정적)
     "163.com": {"server": "smtp.163.com", "port": 465, "encryption": "SSL"},
     "126.com": {"server": "smtp.126.com", "port": 465, "encryption": "SSL"},
-    # 新浪邮箱（使用 SSL）
+    # Sina 메일 (SSL 사용)
     "sina.com": {"server": "smtp.sina.com", "port": 465, "encryption": "SSL"},
-    # 搜狐邮箱（使用 SSL）
+    # Sohu 메일 (SSL 사용)
     "sohu.com": {"server": "smtp.sohu.com", "port": 465, "encryption": "SSL"},
-    # 天翼邮箱（使用 SSL）
+    # China Telecom 메일 (SSL 사용)
     "189.cn": {"server": "smtp.189.cn", "port": 465, "encryption": "SSL"},
-    # 阿里云邮箱（使用 TLS）
+    # Aliyun 메일 (TLS 사용)
     "aliyun.com": {"server": "smtp.aliyun.com", "port": 465, "encryption": "TLS"},
 }
 
 
-# === 配置管理 ===
+# === 설정 관리 ===
 def load_config():
-    """加载配置文件"""
+    """설정 파일 로드"""
     config_path = os.environ.get("CONFIG_PATH", "config/config.yaml")
 
     if not Path(config_path).exists():
-        raise FileNotFoundError(f"配置文件 {config_path} 不存在")
+        raise FileNotFoundError(f"설정 파일 {config_path}이(가) 존재하지 않습니다")
 
     with open(config_path, "r", encoding="utf-8") as f:
         config_data = yaml.safe_load(f)
 
     print(f"설정 파일 로드 성공: {config_path}")
 
-    # 构建配置
+    # 설정 구성
     config = {
         "VERSION_CHECK_URL": config_data["app"]["version_check_url"],
         "SHOW_VERSION_UPDATE": config_data["app"]["show_version_update"],
@@ -154,7 +154,7 @@ def load_config():
         or config_data["notification"].get("slack_webhook_url", ""),
     }
 
-    # 通知渠道配置（环境变量优先）
+    # 알림 채널 설정 (환경 변수 우선)
     notification = config_data.get("notification", {})
     webhooks = notification.get("webhooks", {})
 
@@ -177,7 +177,7 @@ def load_config():
         "TELEGRAM_CHAT_ID", ""
     ).strip() or webhooks.get("telegram_chat_id", "")
 
-    # 邮件配置
+    # 이메일 설정
     config["EMAIL_FROM"] = os.environ.get("EMAIL_FROM", "").strip() or webhooks.get(
         "email_from", ""
     )
@@ -194,7 +194,7 @@ def load_config():
         "EMAIL_SMTP_PORT", ""
     ).strip() or webhooks.get("email_smtp_port", "")
 
-    # ntfy配置
+    # ntfy 설정
     config["NTFY_SERVER_URL"] = (
         os.environ.get("NTFY_SERVER_URL", "").strip()
         or webhooks.get("ntfy_server_url")
@@ -207,41 +207,41 @@ def load_config():
         "ntfy_token", ""
     )
 
-    # Bark配置
+    # Bark 설정
     config["BARK_URL"] = os.environ.get("BARK_URL", "").strip() or webhooks.get(
         "bark_url", ""
     )
 
-    # 输出配置来源信息
+    # 설정 출처 정보 출력
     notification_sources = []
     if config["FEISHU_WEBHOOK_URL"]:
-        source = "环境变量" if os.environ.get("FEISHU_WEBHOOK_URL") else "配置文件"
-        notification_sources.append(f"飞书({source})")
+        source = "환경 변수" if os.environ.get("FEISHU_WEBHOOK_URL") else "설정 파일"
+        notification_sources.append(f"Feishu({source})")
     if config["DINGTALK_WEBHOOK_URL"]:
-        source = "环境变量" if os.environ.get("DINGTALK_WEBHOOK_URL") else "配置文件"
-        notification_sources.append(f"钉钉({source})")
+        source = "환경 변수" if os.environ.get("DINGTALK_WEBHOOK_URL") else "설정 파일"
+        notification_sources.append(f"DingTalk({source})")
     if config["WEWORK_WEBHOOK_URL"]:
-        source = "环境变量" if os.environ.get("WEWORK_WEBHOOK_URL") else "配置文件"
-        notification_sources.append(f"企业微信({source})")
+        source = "환경 변수" if os.environ.get("WEWORK_WEBHOOK_URL") else "설정 파일"
+        notification_sources.append(f"WeWork({source})")
     if config["TELEGRAM_BOT_TOKEN"] and config["TELEGRAM_CHAT_ID"]:
         token_source = (
-            "环境变量" if os.environ.get("TELEGRAM_BOT_TOKEN") else "配置文件"
+            "환경 변수" if os.environ.get("TELEGRAM_BOT_TOKEN") else "설정 파일"
         )
-        chat_source = "环境变量" if os.environ.get("TELEGRAM_CHAT_ID") else "配置文件"
+        chat_source = "환경 변수" if os.environ.get("TELEGRAM_CHAT_ID") else "설정 파일"
         notification_sources.append(f"Telegram({token_source}/{chat_source})")
     if config["EMAIL_FROM"] and config["EMAIL_PASSWORD"] and config["EMAIL_TO"]:
-        from_source = "环境变量" if os.environ.get("EMAIL_FROM") else "配置文件"
-        notification_sources.append(f"邮件({from_source})")
+        from_source = "환경 변수" if os.environ.get("EMAIL_FROM") else "설정 파일"
+        notification_sources.append(f"이메일({from_source})")
     if config["SLACK_WEBHOOK_URL"]:
-        slack_source = "环境变量" if os.environ.get("SLACK_WEBHOOK_URL") else "配置文件"
+        slack_source = "환경 변수" if os.environ.get("SLACK_WEBHOOK_URL") else "설정 파일"
         notification_sources.append(f"Slack({slack_source})")
 
     if config["NTFY_SERVER_URL"] and config["NTFY_TOPIC"]:
-        server_source = "环境变量" if os.environ.get("NTFY_SERVER_URL") else "配置文件"
+        server_source = "환경 변수" if os.environ.get("NTFY_SERVER_URL") else "설정 파일"
         notification_sources.append(f"ntfy({server_source})")
 
     if config["BARK_URL"]:
-        bark_source = "环境变量" if os.environ.get("BARK_URL") else "配置文件"
+        bark_source = "환경 변수" if os.environ.get("BARK_URL") else "설정 파일"
         notification_sources.append(f"Bark({bark_source})")
 
     if notification_sources:
