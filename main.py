@@ -69,7 +69,7 @@ def load_config():
     with open(config_path, "r", encoding="utf-8") as f:
         config_data = yaml.safe_load(f)
 
-    print(f"配置文件加载成功: {config_path}")
+    print(f"설정 파일 로드 성공: {config_path}")
 
     # 构建配置
     config = {
@@ -245,17 +245,17 @@ def load_config():
         notification_sources.append(f"Bark({bark_source})")
 
     if notification_sources:
-        print(f"通知渠道配置来源: {', '.join(notification_sources)}")
+        print(f"알림 채널 설정 출처: {', '.join(notification_sources)}")
     else:
-        print("未配置任何通知渠道")
+        print("설정된 알림 채널이 없습니다")
 
     return config
 
 
-print("正在加载配置...")
+print("설정을 로드하는 중...")
 CONFIG = load_config()
-print(f"TrendRadar v{VERSION} 配置加载完成")
-print(f"监控平台数量: {len(CONFIG['PLATFORMS'])}")
+print(f"TrendRadar v{VERSION} 설정 로드 완료")
+print(f"모니터링 플랫폼 수: {len(CONFIG['PLATFORMS'])}")
 
 
 # === 工具函数 ===
@@ -318,7 +318,7 @@ def check_version_update(
         response.raise_for_status()
 
         remote_version = response.text.strip()
-        print(f"当前版本: {current_version}, 远程版本: {remote_version}")
+        print(f"현재 버전: {current_version}, 원격 버전: {remote_version}")
 
         # 比较版本
         def parse_version(version_str):
@@ -337,7 +337,7 @@ def check_version_update(
         return need_update, remote_version if need_update else None
 
     except Exception as e:
-        print(f"版本检查失败: {e}")
+        print(f"버전 확인 실패: {e}")
         return False, None
 
 
@@ -377,7 +377,7 @@ class SlackNotifier:
     def send_message(self, message: str) -> bool:
         """发送消息到Slack"""
         if not self.webhook_url:
-            print("Slack Webhook URL未配置")
+            print("Slack Webhook URL이 설정되지 않았습니다")
             return False
 
         try:
@@ -386,10 +386,10 @@ class SlackNotifier:
                 self.webhook_url, json=payload, headers={"Content-Type": "application/json"}
             )
             response.raise_for_status()
-            print("Slack消息发送成功")
+            print("Slack 메시지 전송 성공")
             return True
         except Exception as e:
-            print(f"Slack消息发送失败: {e}")
+            print(f"Slack 메시지 전송 실패: {e}")
             return False
 
 
@@ -423,9 +423,9 @@ class NotificationManager:
 
                 if (current_time - file_date).days > retention_days:
                     record_file.unlink()
-                    print(f"清理过期推送记录: {record_file.name}")
+                    print(f"만료된 푸시 기록 삭제: {record_file.name}")
             except Exception as e:
-                print(f"清理记录文件失败 {record_file}: {e}")
+                print(f"기록 파일 삭제 실패 {record_file}: {e}")
 
     def has_pushed_today(self) -> bool:
         """检查今天是否已经推送过"""
@@ -439,7 +439,7 @@ class NotificationManager:
                 record = json.load(f)
             return record.get("pushed", False)
         except Exception as e:
-            print(f"读取推送记录失败: {e}")
+            print(f"푸시 기록 읽기 실패: {e}")
             return False
 
     def record_push(self, report_type: str):
@@ -456,9 +456,9 @@ class NotificationManager:
         try:
             with open(record_file, "w", encoding="utf-8") as f:
                 json.dump(record, f, ensure_ascii=False, indent=2)
-            print(f"推送记录已保存: {report_type} at {now.strftime('%H:%M:%S')}")
+            print(f"푸시 기록 저장 완료: {report_type} at {now.strftime('%H:%M:%S')}")
         except Exception as e:
-            print(f"保存推送记录失败: {e}")
+            print(f"푸시 기록 저장 실패: {e}")
 
     def is_in_time_range(self, start_time: str, end_time: str) -> bool:
         """检查当前时间是否在指定时间范围内"""
@@ -520,7 +520,7 @@ class DataFetcher:
         if id_value == "geeknews":
             data = self.fetch_geeknews()
             if data:
-                print(f"获取 {id_value} 成功（最新数据）")
+                print(f"{id_value} 가져오기 성공 (최신 데이터)")
                 return data, id_value, alias
             return None, id_value, alias
         
@@ -535,7 +535,7 @@ class DataFetcher:
         if id_value in rss_feeds:
             data = self.fetch_rss_feed(rss_feeds[id_value])
             if data:
-                print(f"获取 {id_value} 成功（最新数据）")
+                print(f"{id_value} 가져오기 성공 (최신 데이터)")
                 return data, id_value, alias
             return None, id_value, alias
 
@@ -569,7 +569,7 @@ class DataFetcher:
                     raise ValueError(f"响应状态异常: {status}")
 
                 status_info = "最新数据" if status == "success" else "缓存数据"
-                print(f"获取 {id_value} 成功（{status_info}）")
+                print(f"{id_value} 가져오기 성공 ({status_info})")
                 return data_text, id_value, alias
 
             except Exception as e:
@@ -578,10 +578,10 @@ class DataFetcher:
                     base_wait = random.uniform(min_retry_wait, max_retry_wait)
                     additional_wait = (retries - 1) * random.uniform(1, 2)
                     wait_time = base_wait + additional_wait
-                    print(f"请求 {id_value} 失败: {e}. {wait_time:.2f}秒后重试...")
+                    print(f"{id_value} 요청 실패: {e}. {wait_time:.2f}초 후 재시도...")
                     time.sleep(wait_time)
                 else:
-                    print(f"请求 {id_value} 失败: {e}")
+                    print(f"{id_value} 요청 실패: {e}")
                     return None, id_value, alias
         return None, id_value, alias
 
@@ -719,7 +719,7 @@ class DataFetcher:
                         try:
                             titles_to_translate = list(results[id_value].keys())
                             if titles_to_translate:
-                                print(f"正在翻译 {len(titles_to_translate)} 条标题...")
+                                print(f"{len(titles_to_translate)}개 제목 번역 중...")
                                 translator = GoogleTranslator(
                                     source=CONFIG["TRANSLATION"]["SOURCE"],
                                     target=CONFIG["TRANSLATION"]["TARGET"]
@@ -737,15 +737,15 @@ class DataFetcher:
                                     new_platform_results[final_title] = results[id_value][original_title]
                                 
                                 results[id_value] = new_platform_results
-                                print(f"翻译完成: {id_value}")
+                                print(f"번역 완료: {id_value}")
                         except Exception as e:
-                            print(f"翻译失败 {id_value}: {e}")
+                            print(f"번역 실패 {id_value}: {e}")
                             # 翻译失败时保持原样，不抛出异常影响流程
                 except json.JSONDecodeError:
-                    print(f"解析 {id_value} 响应失败")
+                    print(f"{id_value} 응답 파싱 실패")
                     failed_ids.append(id_value)
                 except Exception as e:
-                    print(f"处理 {id_value} 数据出错: {e}")
+                    print(f"{id_value} 데이터 처리 오류: {e}")
                     failed_ids.append(id_value)
             else:
                 failed_ids.append(id_value)
@@ -755,7 +755,7 @@ class DataFetcher:
                 actual_interval = max(50, actual_interval)
                 time.sleep(actual_interval / 1000)
 
-        print(f"成功: {list(results.keys())}, 失败: {failed_ids}")
+        print(f"성공: {list(results.keys())}, 실패: {failed_ids}")
         return results, id_to_name, failed_ids
 
 
@@ -939,7 +939,7 @@ def parse_file_titles(file_path: Path) -> Tuple[Dict, Dict]:
                         }
 
                     except Exception as e:
-                        print(f"解析标题行出错: {line}, 错误: {e}")
+                        print(f"제목 행 파싱 오류: {line}, 오류: {e}")
 
     return titles_by_id, id_to_name
 
@@ -1267,7 +1267,7 @@ def count_word_frequency(
 
     # 如果没有配置词组，创建一个包含所有新闻的虚拟词组
     if not word_groups:
-        print("频率词配置为空，将显示所有新闻")
+        print("키워드 설정이 비어있어 모든 뉴스를 표시합니다")
         word_groups = [{"required": [], "normal": [], "group_key": "全部新闻"}]
         filter_words = []  # 清空过滤词，显示所有新闻
 
@@ -1326,7 +1326,7 @@ def count_word_frequency(
             if len(word_groups) == 1 and word_groups[0]["group_key"] == "全部新闻"
             else "频率词过滤"
         )
-        print(f"当日汇总模式：处理 {total_input_news} 条新闻，模式：{filter_status}")
+        print(f"당일 요약 모드: {total_input_news}개 뉴스 처리, 모드: {filter_status}")
 
     word_stats = {}
     total_titles = 0
@@ -1505,9 +1505,9 @@ def count_word_frequency(
                     f"增量模式：{total_new_count} 条新增新闻中，有 {matched_new_count} 条{filter_status}"
                 )
                 if matched_new_count == 0 and len(word_groups) > 1:
-                    print("增量模式：没有新增新闻匹配频率词，将不会发送通知")
+                    print("증분 모드: 키워드와 일치하는 신규 뉴스가 없어 알림을 보내지 않습니다")
             else:
-                print("增量模式：未检测到新增新闻")
+                print("증분 모드: 신규 뉴스가 감지되지 않았습니다")
     elif mode == "current":
         total_input_news = sum(len(titles) for titles in results_to_process.values())
         if is_first_today:
@@ -3567,10 +3567,10 @@ def send_to_notifications(
 
         if CONFIG["PUSH_WINDOW"]["ONCE_PER_DAY"]:
             if push_manager.has_pushed_today():
-                print(f"推送窗口控制：今天已推送过，跳过本次推送")
+                print(f"푸시 윈도우 제어: 오늘 이미 푸시했으므로 이번 푸시를 건너뜁니다")
                 return results
             else:
-                print(f"推送窗口控制：今天首次推送")
+                print(f"푸시 윈도우 제어: 오늘 처음 푸시")
 
     report_data = prepare_report_data(stats, failed_ids, new_titles, id_to_name, mode)
 
@@ -3658,7 +3658,7 @@ def send_to_notifications(
         )
 
     if not results:
-        print("未配置任何通知渠道，跳过通知发送")
+        print("설정된 알림 채널이 없어 알림 전송을 건너뜁니다")
 
     # 如果成功发送了任何通知，且启用了每天只推一次，则记录推送
     if (
