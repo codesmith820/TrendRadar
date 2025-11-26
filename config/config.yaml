@@ -115,6 +115,14 @@ platforms:
     name: "Product Hunt"
   - id: "geeknews"
     name: "GeekNews"
+  - id: "mittr"
+    name: "MIT Technology Review"
+  - id: "ainews"
+    name: "AI News"
+  - id: "googleblog"
+    name: "Google Blog"
+  - id: "deepmind"
+    name: "DeepMind Blog"
   
   # Chinese platforms (disabled)
   # - id: "thepaper"

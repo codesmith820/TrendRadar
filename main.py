@@ -19,6 +19,8 @@ import pytz
 import requests
 import yaml
 from deep_translator import GoogleTranslator
+import xml.etree.ElementTree as ET
+from urllib.parse import urlparse
 
 
 VERSION = "3.3.0"
@@ -521,6 +523,21 @@ class DataFetcher:
                 print(f"获取 {id_value} 成功（最新数据）")
                 return data, id_value, alias
             return None, id_value, alias
+        
+        # RSS feed fetchers
+        rss_feeds = {
+            "mittr": "https://www.technologyreview.com/feed/",
+            "ainews": "https://www.artificialintelligence-news.com/feed/",
+            "googleblog": "https://blog.google/rss/",
+            "deepmind": "https://deepmind.google/blog/rss.xml"
+        }
+        
+        if id_value in rss_feeds:
+            data = self.fetch_rss_feed(rss_feeds[id_value])
+            if data:
+                print(f"获取 {id_value} 成功（最新数据）")
+                return data, id_value, alias
+            return None, id_value, alias
 
         url = f"https://newsnow.busiyi.world/api/s?id={id_value}&latest"
 
@@ -568,8 +585,52 @@ class DataFetcher:
                     return None, id_value, alias
         return None, id_value, alias
 
+    def fetch_rss_feed(self, feed_url: str) -> Optional[str]:
+        """Fetch news from RSS feed"""
+        try:
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            }
+            response = requests.get(feed_url, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            # Parse XML
+            import xml.etree.ElementTree as ET
+            root = ET.fromstring(response.content)
+            
+            items = []
+            # Handle both RSS and Atom feeds
+            if root.tag == "{http://www.w3.org/2005/Atom}feed":  # Atom
+                entries = root.findall("{http://www.w3.org/2005/Atom}entry")
+                for idx, entry in enumerate(entries[:30], 1):
+                    title_elem = entry.find("{http://www.w3.org/2005/Atom}title")
+                    link_elem = entry.find("{http://www.w3.org/2005/Atom}link")
+                    
+                    if title_elem is not None and link_elem is not None:
+                        title = title_elem.text
+                        url = link_elem.get("href", "")
+                        items.append({"title": title, "url": url})
+            else:  # RSS
+                channel = root.find("channel")
+                if channel is not None:
+                    entries = channel.findall("item")[:30]
+                    for idx, entry in enumerate(entries, 1):
+                        title_elem = entry.find("title")
+                        link_elem = entry.find("link")
+                        
+                        if title_elem is not None and link_elem is not None:
+                            title = title_elem.text
+                            url = link_elem.text
+                            items.append({"title": title, "url": url})
+            
+            result = {"items": items}
+            return json.dumps(result)
+        except Exception as e:
+            print(f"RSS feed fetch error: {e}")
+            return None
+    
     def fetch_geeknews(self) -> Optional[str]:
-        """Fetch data from GeekNews (news.hada.io)"""
+        """Fetch news from GeekNews (news.hada.io) using web scraping"""
         try:
             url = "https://news.hada.io/"
             headers = {
