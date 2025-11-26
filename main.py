@@ -271,7 +271,7 @@ def format_date_folder():
 
 def format_time_filename():
     """시간 파일명 형식화"""
-    return get_korea_time().strftime("%H시%M을")
+    return get_korea_time().strftime("%H시%M분")
 
 
 def clean_title(title: str) -> str:
@@ -1120,7 +1120,7 @@ def detect_latest_new_titles(current_platform_ids: Optional[List[str]] = None) -
     return new_titles
 
 
-# === 통계 및 을석 ===
+# === 통계 및 분석  ===
 def calculate_news_weight(
     title_data: Dict, rank_threshold: int = CONFIG["RANK_THRESHOLD"]
 ) -> float:
@@ -2329,7 +2329,7 @@ def render_html_content(
                     <button class="save-btn" onclick="saveAsImage()">저장로이미지</button>
                     <button class="save-btn" onclick="saveAsMultipleImages()">을단계저장</button>
                 </div>
-                <div class="header-title">인식뉴스뉴스 을석</div>
+                <div class="header-title">인식뉴스뉴스 분석 </div>
                 <div class="header-info">
                     <div class="info-item">
                         <span class="info-label">보고서타입</span>
@@ -2344,7 +2344,7 @@ def render_html_content(
         else:
             html += "당일일요약"
     else:
-        html += "실제시뉴스 을석"
+        html += "실제시뉴스 분석 "
 
     html += """</span>
                     </div>
@@ -2368,7 +2368,7 @@ def render_html_content(
     html += """</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">생성시사이</span>
+                        <span class="info-label">생성 시간 </span>
                         <span class="info-value">"""
 
     now = get_korea_time()
@@ -2454,10 +2454,10 @@ def render_html_content(
 
                     html += f'<span class="rank-num {rank_class}">{rank_text}</span>'
 
-                # 처리시사이표시
+                # 처리 시간 표시
                 time_display = title_data.get("time_display", "")
                 if time_display:
-                    # 간단하다화시사이표시형식，물결선교체로~
+                    # 간단하다화 시간 표시형식，물결선교체로~
                     simplified_time = (
                         time_display.replace(" ~ ", "~")
                         .replace("[", "")
@@ -2623,7 +2623,7 @@ def render_html_content(
                     
                     const link = document.createElement('a');
                     const now = new Date();
-                    const filename = `TrendRadar_인식뉴스뉴스 을석_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}.png`;
+                    const filename = `TrendRadar_인식뉴스뉴스 분석 _${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}.png`;
                     
                     link.download = filename;
                     link.href = canvas.toDataURL('image/png', 1.0);
@@ -2658,7 +2658,7 @@ def render_html_content(
                 const maxHeight = 5000 / scale;
                 
                 try {
-                    button.textContent = '뉴스 을석중...';
+                    button.textContent = '뉴스 분석 중...';
                     button.disabled = true;
                     
                     // 가져오기모든가능을을할요소
@@ -2849,7 +2849,7 @@ def render_html_content(
                     
                     // 에서로드모든이미지
                     const now = new Date();
-                    const baseFilename = `TrendRadar_인식뉴스뉴스 을석_${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+                    const baseFilename = `TrendRadar_인식뉴스뉴스 분석 _${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
                     
                     for (let i = 0; i < images.length; i++) {
                         const link = document.createElement('a');
@@ -2991,8 +2991,8 @@ def render_dingtalk_content(
     now = get_korea_time()
 
     text_content += f"**전체 뉴스수：** {total_titles}\n\n"
-    text_content += f"**시사이：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-    text_content += f"**타입：** 인식뉴스 을석 보고서\n\n"
+    text_content += f"** 시간 ：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+    text_content += f"**타입：** 인식뉴스 분석  보고서\n\n"
 
     text_content += "---\n\n"
 
@@ -3108,8 +3108,8 @@ def split_content_into_batches(
         base_header = ""
     elif format_type == "dingtalk":
         base_header = f"**전체 뉴스수：** {total_titles}\n\n"
-        base_header += f"**시사이：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
-        base_header += f"**타입：** 인식뉴스 을석 보고서\n\n"
+        base_header += f"** 시간 ：** {now.strftime('%Y-%m-%d %H:%M:%S')}\n\n"
+        base_header += f"**타입：** 인식뉴스 분석  보고서\n\n"
         base_header += "---\n\n"
 
     base_footer = ""
@@ -3561,7 +3561,7 @@ def send_to_notifications(
         if not push_manager.is_in_time_range(time_range_start, time_range_end):
             now = get_korea_time()
             print(
-                f"푸시윈도우제어：당일현재시사이 {now.strftime('%H:%M')} 않음에푸시시사이윈도우 {time_range_start}-{time_range_end} 내부，건너뛰기푸시"
+                f"푸시윈도우제어：당일현재 시간  {now.strftime('%H:%M')} 않음에푸시 시간 윈도우 {time_range_start}-{time_range_end} 내부，건너뛰기푸시"
             )
             return results
 
@@ -3809,7 +3809,7 @@ def send_to_dingtalk(
         payload = {
             "msgtype": "markdown",
             "markdown": {
-                "title": f"TrendRadar 인식뉴스 을석 보고서 - {report_type}",
+                "title": f"TrendRadar 인식뉴스 분석  보고서 - {report_type}",
                 "text": batch_content,
             },
         }
@@ -4101,7 +4101,7 @@ def send_to_email(
 
         # 설정이메일주제목
         now = get_korea_time()
-        subject = f"TrendRadar 인식뉴스 을석 보고서 - {report_type} - {now.strftime('%m월%d일 %H:%M')}"
+        subject = f"TrendRadar 인식뉴스 분석  보고서 - {report_type} - {now.strftime('%m월%d일 %H:%M')}"
         msg["Subject"] = Header(subject, "utf-8")
 
         # 설정그기타표준 header
@@ -4111,10 +4111,10 @@ def send_to_email(
 
         # 추가순수텍스트부을을（작업로대체）
         text_content = f"""
-TrendRadar 인식뉴스 을석 보고서
+TrendRadar 인식뉴스 분석  보고서
 ========================
 보고서타입：{report_type}
-생성시사이：{now.strftime('%Y-%m-%d %H:%M:%S')}
+생성 시간 ：{now.strftime('%Y-%m-%d %H:%M:%S')}
 
 요청하다사용자지원HTML이메일클라이언트 확인보다전체보고서콘텐츠。
         """
@@ -4441,9 +4441,9 @@ def send_to_bark(
         return False
 
 
-# === 주뉴스 을석기 ===
+# === 주뉴스 분석 기 ===
 class NewsAnalyzer:
-    """뉴스 을석기"""
+    """뉴스 분석 기"""
 
     # 모드전략정의
     MODE_STRATEGIES = {
@@ -4642,7 +4642,7 @@ class NewsAnalyzer:
         failed_ids: Optional[List] = None,
         is_daily_summary: bool = False,
     ) -> Tuple[List[Dict], str]:
-        """통합뉴스 을석 파이프라인지：데이터 처리 → 통계계산 → HTML생성"""
+        """통합뉴스 분석  파이프라인지：데이터 처리 → 통계계산 → HTML생성"""
 
         # 통계계산
         stats, total_titles = count_word_frequency(
@@ -4728,7 +4728,7 @@ class NewsAnalyzer:
         )
         print(f"{summary_type} 보고서 생성 중...")
 
-        # 을석 데이터 로드
+        # 분석  데이터 로드
         analysis_data = self._load_analysis_data()
         if not analysis_data:
             return None
@@ -4737,7 +4737,7 @@ class NewsAnalyzer:
             analysis_data
         )
 
-        # 실행뉴스 을석 파이프라인지
+        # 실행뉴스 분석  파이프라인지
         stats, html_file = self._run_analysis_pipeline(
             all_results,
             mode_strategy["summary_mode"],
@@ -4769,7 +4769,7 @@ class NewsAnalyzer:
         summary_type = "당일현재순위요약" if mode == "current" else "당일일요약"
         print(f"{summary_type} HTML 생성 중...")
 
-        # 을석 데이터 로드
+        # 분석  데이터 로드
         analysis_data = self._load_analysis_data()
         if not analysis_data:
             return None
@@ -4778,7 +4778,7 @@ class NewsAnalyzer:
             analysis_data
         )
 
-        # 실행뉴스 을석 파이프라인지
+        # 실행뉴스 분석  파이프라인지
         _, html_file = self._run_analysis_pipeline(
             all_results,
             mode,
@@ -4955,7 +4955,7 @@ class NewsAnalyzer:
         return summary_html
 
     def run(self) -> None:
-        """실행뉴스 을석프로세스"""
+        """실행뉴스 분석 프로세스"""
         try:
             self._initialize_and_check_config()
 
@@ -4966,7 +4966,7 @@ class NewsAnalyzer:
             self._execute_mode_strategy(mode_strategy, results, id_to_name, failed_ids)
 
         except Exception as e:
-            print(f"을석 프로세스 실행 오류: {e}")
+            print(f"분석  프로세스 실행 오류: {e}")
             raise
 
 
